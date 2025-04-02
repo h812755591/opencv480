@@ -12,11 +12,13 @@ public:
 	void pixel_demo1(cv::Mat & img);
 	void arithmetic_demo1(cv::Mat & img);
 	void tracking_bar_demo(cv::Mat &image);
-//public:
-//	static void on_lightness(int b, void* userdata);
-//	static void on_contrast(int b, void* userdata);
+	void keyboard_demo(cv::Mat &image);
+public:
+	static void on_track(int b, void* userdata);
+	//对比度
+	static void on_contrast(int b, void* userdata);
 //	static std::string UTF8ToLocal(const std::string& utf8Str);
 };
-
+void  test(void);
 
 

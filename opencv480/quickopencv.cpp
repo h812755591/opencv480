@@ -88,15 +88,91 @@ void QuickDemo::arithmetic_demo1(cv::Mat & img)
 
 void QuickDemo::tracking_bar_demo(cv::Mat &image)
 {
+	std::string in_win_name = "输入窗口";
+	
 	std::string win_name = "窗口";
 	cv::namedWindow(win_name);
-	int init_value = 50;
+
+	int init_value = 0;
+	int init_const = 0;
 	int max_value = 100;
-	int contrast_value = 100;
-	std::string trackbar_name = "调整1";
-	cv::createTrackbar(trackbar_name, win_name, &init_value, max_value, nullptr);
-	cv::imshow(win_name,image);
+	std::string trackbar_name_const = "对比度";
+	std::string trackbar_name_light = "亮度";
+	cv::createTrackbar(trackbar_name_const, win_name, &init_const, max_value,
+		QuickDemo::on_contrast, (void *)&image);
+	cv::createTrackbar(trackbar_name_light, win_name, &init_value, max_value,
+		QuickDemo::on_track, (void *)&image);
+	cv::imshow(win_name, image);
+	cv::imshow(in_win_name,image);
 }
 
+void QuickDemo::keyboard_demo(cv::Mat & image)
+{
+	cv::Mat dst = cv::Mat::zeros(image.size(), image.type());
+	std::string in_win_name = "输入窗口";
+	cv::namedWindow(in_win_name);
+	cv::imshow(in_win_name, image);
+	std::string out_win_name = "输出窗口";
+	while (true)
+	{
+		char key =(char) cv::waitKey(0);//在图像上按键 返回
+		if (key == '\033')
+		{
+			std::cout << "esc 退出" << std::endl;
+			break;
+		}
+		else if (key == '1')
+		{
+			std::cout << "按键 "<<key << std::endl;
+			cv::cvtColor(image, dst, cv::COLOR_BGR2GRAY);
+			cv::imshow(out_win_name, dst);
+		}
+		else if (key == '2')
+		{
+			
+			std::cout << "按键 " << key << std::endl;
+			cv::cvtColor(image, dst, cv::COLOR_BGR2HSV);
+			cv::imshow(out_win_name, dst);
+		}
+		else if (key == '3')
+		{
+			cv::Mat scalar_mat(image.size(), image.type(), cv::Scalar(30, 30, 30));
+			std::cout << "按键 " << key << std::endl;
+			dst = image + scalar_mat;
+			cv::imshow(out_win_name, dst);
+		}
+	}
+}
 
+void QuickDemo::on_track(int b, void * userdata)
+{
+	cv::Mat  p = *((cv::Mat *)userdata);
+	cv::Mat  add_num = cv::Mat(p.size(), p.type(), cv::Scalar(b, b, b));
+	cv::Mat dst;
+	cv::add(p, add_num, dst);
+	std::string win_name = "窗口";
+	cv::imshow(win_name, dst);
+}
 
+void QuickDemo::on_contrast(int b, void * userdata)
+{
+	cv::Mat image = *((cv::Mat*)userdata);
+	cv::Mat dst = cv::Mat::zeros(image.size(), image.type());
+	cv::Mat m = cv::Mat::zeros(image.size(), image.type());
+	double contrast = 1.0;
+	if (b > 10)
+	{
+		contrast = b / 10.0;
+	}
+	std::cout << b << std::endl;
+	addWeighted(image, contrast, m, 0.0, 0, dst);
+	imshow("窗口", dst);
+	std::cout<<"对比度"<<std::endl;
+}
+
+void test(void)
+{
+	
+	std::cout << "hello" << std::endl;
+	
+}
