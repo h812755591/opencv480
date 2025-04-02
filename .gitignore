@@ -259,3 +259,7 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+#
+**/opencv480.vcxproj.filters
+**/opencv480.vcxproj.user
