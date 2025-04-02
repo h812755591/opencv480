@@ -93,7 +93,7 @@ void QuickDemo::tracking_bar_demo(cv::Mat &image)
 	int init_value = 50;
 	int max_value = 100;
 	int contrast_value = 100;
-	std::string trackbar_name = "调整";
+	std::string trackbar_name = "调整1";
 	cv::createTrackbar(trackbar_name, win_name, &init_value, max_value, nullptr);
 	cv::imshow(win_name,image);
 }
