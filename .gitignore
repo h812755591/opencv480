@@ -263,3 +263,5 @@ __pycache__/
 #
 **/opencv480.vcxproj.filters
 **/opencv480.vcxproj.user
+**/opencv480.vcxproj
+x64/
