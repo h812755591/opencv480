@@ -144,6 +144,9 @@ void QuickDemo::keyboard_demo(cv::Mat & image)
 	}
 }
 
+
+
+
 void QuickDemo::on_track(int b, void * userdata)
 {
 	cv::Mat  p = *((cv::Mat *)userdata);
@@ -175,4 +178,39 @@ void test(void)
 	
 	std::cout << "hello" << std::endl;
 	
+}
+void QuickDemo::color_style_demo(cv::Mat & image)
+{
+	std::string in_win_name = "输入窗口";
+	cv::namedWindow(in_win_name);
+	cv::imshow(in_win_name, image);
+	cv::Mat dst = cv::Mat::zeros(image.size(),image.type());
+	int max_num = 21;//颜色表颜色map个数
+	for (int i = 0; i <= max_num; ++i)
+	{
+		// 将整数值转为枚举类型
+		cv::ColormapTypes colormap = static_cast<cv::ColormapTypes>(i);
+		//首先转化为灰度图
+		cv::cvtColor(image, dst, cv::COLOR_BGR2GRAY);
+		cv::Mat colorized_img;
+		cv::applyColorMap(dst, colorized_img, colormap);
+		//
+		std::string out_win_name = "输出窗口";
+		cv::namedWindow(out_win_name);
+		cv::imshow(out_win_name, colorized_img);
+		int key=cv::waitKey(2000);
+		if (27== key)
+		{
+			break;
+		}
+		else
+		{
+			//需要说明的是，无论我们点击哪个图像 都会有相应
+			std::cout << "key is " <<key<< std::endl;
+		}
+
+	}
+	
+
+
 }

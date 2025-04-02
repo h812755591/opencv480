@@ -28,7 +28,8 @@ void test_load_img(string & path= img_path)
 	//qd.pixel_demo1(img);
 	//qd.arithmetic_demo1(img);
 	//qd.tracking_bar_demo(img);
-	qd.keyboard_demo(img);
+	//qd.keyboard_demo(img);
+	qd.color_style_demo(img);
 	waitKey(0);
 	destroyAllWindows();
 }
