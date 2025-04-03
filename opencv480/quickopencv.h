@@ -23,6 +23,8 @@ public:
 	void random_drawing(void);
 	void polyline_drawing_demo(void);
 	void polyline_drawing_hierarchy(void);
+	void mouse_drawing_demo(void);
+	void mouse_drawing_demo1(cv::Mat &image);
 public:
 	static void on_track(int b, void* userdata);
 	//对比度
@@ -30,8 +32,11 @@ public:
 	//查看hsv
 	static void trackbar_hsv(cv::Mat &image);
 	static cv::Mat  read_img(const std::string& path);
+	static void on_draw(int event, int x, int y,
+		int flags, void *userdata);
+	/*static void on_draw1(int event, int x, int y,
+		int flags, void *userdata);*/
 	//static void on_contrast(int b, void* userdata);
-//	static std::string UTF8ToLocal(const std::string& utf8Str);
 };
 void  test(void);
 

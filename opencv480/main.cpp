@@ -5,7 +5,7 @@
 using namespace std;
 //using namespace cv;
 
-string img_path = "J:/vs2017ws/data/flower.png";
+string img_path = "J:/vs2017ws/data/yuan_test.png";
 //string output_path = "J:/vs2017ws/data/";
 
 
@@ -38,7 +38,10 @@ void test_load_img(string & path= img_path)
 	//qd.drawing_demo();
 	//qd.random_drawing();
 	//qd.polyline_drawing_demo();
-	qd.polyline_drawing_hierarchy();
+	//qd.polyline_drawing_hierarchy();
+	qd.mouse_drawing_demo();
+	//qd.mouse_drawing_demo1(img);
+
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 }

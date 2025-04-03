@@ -508,6 +508,44 @@ void QuickDemo::polyline_drawing_hierarchy(void)
 
 }
 
+
+struct MouseData {
+	cv::Mat image;       // 直接存储图像副本，避免悬垂指针
+	cv::Mat temp;
+	cv::Point sp;
+	cv::Point ep;
+};
+
+void QuickDemo::mouse_drawing_demo() {
+	std::string path = "J:/vs2017ws/data/yuan_test.png";
+	cv::Mat image = read_img(path);  
+	cv::namedWindow("鼠标绘制", cv::WINDOW_AUTOSIZE);
+
+	// 动态分配 MouseData，确保回调函数生命周期内有效
+	MouseData* userdata = new MouseData;
+	userdata->image = image.clone();  // 存储副本
+	userdata->temp = image.clone();
+	userdata->sp = cv::Point(-1, -1);
+	userdata->ep = cv::Point(-1, -1);
+
+	// 设置回调函数
+	cv::setMouseCallback("鼠标绘制", on_draw, (void*)userdata);
+
+	// 显示初始图像
+	cv::imshow("鼠标绘制", userdata->image);
+
+	// 保持窗口打开，等待事件
+	while (true) {
+		int key = cv::waitKey(10);
+		if (key == 27) {  // ESC 键退出
+			break;
+		}
+	}
+
+	// 释放内存（确保在退出事件循环后）
+	delete userdata;
+}
+
 void QuickDemo::trackbar_hsv(cv::Mat & image)
 {
 	cv::Mat hsv;
@@ -541,4 +579,98 @@ cv::Mat  QuickDemo::read_img(const std::string & path)
 	}
 	return img;
 
+}
+
+void QuickDemo::on_draw(int event, int x, int y, int flags, void* userdata) {
+	MouseData* data = (MouseData*)userdata;
+	cv::Mat& image = data->image;  // 直接操作存储的副本
+	cv::Mat& temp = data->temp;
+	cv::Point& sp = data->sp;
+	cv::Point& ep = data->ep;
+
+	if (event == cv::EVENT_LBUTTONDOWN) {
+		sp.x = x;
+		sp.y = y;
+		std::cout << "start point:" << sp << std::endl;
+	}
+	else if (event == cv::EVENT_LBUTTONUP) {
+		ep.x = x;
+		ep.y = y;
+		int dx = ep.x - sp.x;
+		int dy = ep.y - sp.y;
+		if (dx > 0 && dy > 0) {
+			cv::Rect box(sp.x, sp.y, dx, dy);
+			temp.copyTo(image);
+			imshow("ROI区域", image(box));
+			rectangle(image, box, cv::Scalar(0, 0, 255), 2, 8, 0);
+			imshow("鼠标绘制", image);
+			// ready for next drawing
+			sp.x = -1;
+			sp.y = -1;
+		}
+	}
+	else if (event == cv::EVENT_MOUSEMOVE) {
+		if (sp.x > 0 && sp.y > 0) {
+			ep.x = x;
+			ep.y = y;
+			int dx = ep.x - sp.x;
+			int dy = ep.y - sp.y;
+			if (dx > 0 && dy > 0) {
+				cv::Rect box(sp.x, sp.y, dx, dy);
+				temp.copyTo(image);
+				rectangle(image, box, cv::Scalar(0, 0, 255), 2, 8, 0);
+				imshow("鼠标绘制", image);
+			}
+		}
+	}
+}
+cv::Point sp(-1, -1);
+cv::Point ep(-1, -1);
+cv::Mat temp;
+static void on_draw1(int event, int x, int y, int flags, void *userdata) {
+	cv::Mat image = *((cv::Mat*)userdata);
+	if (event == cv::EVENT_LBUTTONDOWN) {
+		sp.x = x;
+		sp.y = y;
+		std::cout << "start point:" << sp << std::endl;
+	}
+	else if (event == cv::EVENT_LBUTTONUP) {
+		ep.x = x;
+		ep.y = y;
+		int dx = ep.x - sp.x;
+		int dy = ep.y - sp.y;
+		if (dx > 0 && dy > 0) {
+			cv::Rect box(sp.x, sp.y, dx, dy);
+			temp.copyTo(image);//这个代码的 目的是回复到原始图像
+			imshow("ROI区域", image(box));
+			rectangle(image, box, cv::Scalar(0, 0, 255), 2, 8, 0);
+			imshow("鼠标绘制", image);
+			// ready for next drawing
+			sp.x = -1;
+			sp.y = -1;
+		}
+	}
+	else if (event == cv::EVENT_MOUSEMOVE) {
+		if (sp.x > 0 && sp.y > 0) {
+			ep.x = x;
+			ep.y = y;
+			int dx = ep.x - sp.x;
+			int dy = ep.y - sp.y;
+			if (dx > 0 && dy > 0) {
+				cv::Rect box(sp.x, sp.y, dx, dy);
+				temp.copyTo(image);
+				rectangle(image, box, cv::Scalar(0, 0, 255), 2, 8, 0);
+				imshow("鼠标绘制", image);
+			}
+		}
+	}
+}
+
+void QuickDemo::mouse_drawing_demo1(cv::Mat &image) {
+	//std::string path = "J:/vs2017ws/data/yuan_test.png";
+	//cv::Mat image = read_img(path);
+	cv::namedWindow("鼠标绘制", cv::WINDOW_AUTOSIZE);
+	cv::setMouseCallback("鼠标绘制", on_draw1, (void*)(&image));
+	imshow("鼠标绘制", image);
+	temp = image.clone();
 }
