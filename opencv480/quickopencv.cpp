@@ -259,8 +259,15 @@ void QuickDemo::channels_demo(cv::Mat & image)
 	cv::imshow("通道混合", dst1);
 }
 
-void QuickDemo::inrange_demo(cv::Mat & image)
+void QuickDemo::inrange_demo()
 {
+	std::string img_path = "J:/vs2017ws/data/flower.png";
+	cv::Mat image = cv::imread(img_path);
+	if (image.empty())
+	{
+		std::cout << "img could not load" << std::endl;
+		return;
+	}
 	std::string in_win_name = "输入窗口";
 	cv::namedWindow(in_win_name);
 	cv::imshow(in_win_name, image);
@@ -268,6 +275,7 @@ void QuickDemo::inrange_demo(cv::Mat & image)
 	cvtColor(image, hsv, cv::COLOR_BGR2HSV);
 	cv::Mat mask;//mask是对应的二值图
 	cv::inRange(hsv, cv::Scalar(35, 43, 46), cv::Scalar(77, 255, 255), mask);
+	//cv::inRange(hsv, cv::Scalar(75, 100, 50), cv::Scalar(95, 255, 255), mask);
 	std::string mask_win = "二值化图像";
 	cv::namedWindow(mask_win);
 	cv::imshow(mask_win, mask);
@@ -281,6 +289,41 @@ void QuickDemo::inrange_demo(cv::Mat & image)
 	cv::imshow("not mask", dst_mask);
 	cv::copyTo(image,redback, dst_mask);
 	cv::imshow("roi区域提取", redback);
+}
+void QuickDemo::inrange_demo01(void)
+{
+	std::string path = "J:/vs2017ws/data/greenback50.png";
+	cv::Mat img = cv::imread(path);
+	if (img.empty())
+	{
+		std::cout << "img could not load" << std::endl;
+		return;
+	}
+	std::string in_win_name = "输入窗口";
+	cv::namedWindow(in_win_name);
+	cv::imshow(in_win_name, img);
+	cv::Mat hsv;
+	cvtColor(img, hsv, cv::COLOR_BGR2HSV);
+	cv::Mat mask;//mask是对应的二值图 根据图像背景是绿色 查表 
+	cv::inRange(hsv, cv::Scalar(35, 43, 46), cv::Scalar(77, 255, 255), mask);
+	std::string mask_win = "二值化图像";
+	cv::namedWindow(mask_win);
+	cv::imshow(mask_win, mask);
+	//
+	cv::Mat redback = cv::Mat::zeros(img.size(), img.type());
+	//redback = cv::Scalar(40, 40, 200); //这种写法不是很合适
+	redback.setTo(cv::Scalar(0, 0, 255));//这个是纯红色背景 BGR
+
+	cv::Mat dst_mask;
+	cv::bitwise_not(mask, dst_mask);
+	cv::imshow("not mask", dst_mask);
+	cv::copyTo(img, redback, dst_mask);
+	cv::imshow("roi区域提取", redback);
+}
+void QuickDemo::pixel_statistic_demo(void)
+{
+	std::string  path= "J:/vs2017ws/data/flower1.png";
+	cv::Mat  img= read_img(path);
 }
 void QuickDemo::trackbar_hsv(cv::Mat & image)
 {
@@ -301,4 +344,16 @@ void QuickDemo::trackbar_hsv(cv::Mat & image)
 		cv::imshow("Threshold", mask);
 		if (cv::waitKey(30) == 27) break;  // 按 ESC 退出
 	}
+}
+
+cv::Mat & QuickDemo::read_img(const std::string path)
+{
+	// TODO: 在此处插入 return 语句
+	cv::Mat img = cv::imread(path);
+	if (img.empty())
+	{
+		throw std::runtime_error("Resource not found: " + path);
+	}
+	return img;
+
 }

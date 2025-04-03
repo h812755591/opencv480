@@ -31,8 +31,10 @@ void test_load_img(string & path= img_path)
 	//qd.color_style_demo(img);
 	//qd.bitwise_demo(img);
 	//qd.channels_demo(img);
-	qd.inrange_demo(img);
+	//qd.inrange_demo();
+	//qd.inrange_demo01();
 	//qd.trackbar_hsv(img);
+	qd.pixel_statistic_demo();
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 }
