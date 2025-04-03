@@ -400,6 +400,41 @@ void QuickDemo::drawing_demo(void)
 	imshow("绘制演示", bg);*/
 	
 }
+void QuickDemo::random_drawing(void)
+{
+	cv::Mat canvas = cv::Mat::zeros(cv::Size(512, 512), CV_8UC3);
+	int w = canvas.cols;
+	int h = canvas.rows;
+	//cv::RNG 是 OpenCV 中用于生成伪随机数的工具类，
+	//支持均匀分布、高斯分布等多种随机数生成方式，
+	//适用于图像处理、数据增强、算法测试等场景‌
+	//其实cv::RNG rng() 也是固定的，默认是 2**32-1
+	//需要注意的是 这里的随机生成，不是每次都是一样的
+	//而是每次生成的和前一次一样
+	// 第一次调用 1 2 3 
+	//第二次调用还是1 2 3 
+	cv::RNG rng(12345);
+	while (true) {
+		int c = cv::waitKey(1000);
+		if (c == 27) { // 退出
+			break;
+		}
+		//
+		int x1 = rng.uniform(0, w);
+		int y1 = rng.uniform(0, h);
+		int x2 = rng.uniform(0, w);
+		int y2 = rng.uniform(0, h);
+		int b = rng.uniform(0, 255);
+		int g = rng.uniform(0, 255);
+		int r = rng.uniform(0, 255);
+		// canvas = Scalar(0, 0, 0);
+		line(canvas, cv::Point(x1, y1), cv::Point(x2, y2), 
+			cv::Scalar(b, g, r), 1, cv::LINE_AA, 0);
+		imshow("随机绘制演示", canvas);
+	}
+
+
+}
 void QuickDemo::trackbar_hsv(cv::Mat & image)
 {
 	cv::Mat hsv;
