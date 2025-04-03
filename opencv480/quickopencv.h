@@ -25,7 +25,7 @@ public:
 	static void on_contrast(int b, void* userdata);
 	//查看hsv
 	static void trackbar_hsv(cv::Mat &image);
-	static cv::Mat & read_img(const std::string path);
+	static cv::Mat  read_img(const std::string& path);
 	//static void on_contrast(int b, void* userdata);
 //	static std::string UTF8ToLocal(const std::string& utf8Str);
 };

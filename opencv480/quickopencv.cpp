@@ -322,8 +322,33 @@ void QuickDemo::inrange_demo01(void)
 }
 void QuickDemo::pixel_statistic_demo(void)
 {
-	std::string  path= "J:/vs2017ws/data/flower1.png";
+	std::string  path= "J:/vs2017ws/data/flower.png";
 	cv::Mat  img= read_img(path);
+	std::string in_win_name = "输入窗口";
+	cv::namedWindow(in_win_name);
+	cv::imshow(in_win_name, img);
+	double minv, maxv;
+	//Point_<int>
+	cv::Point minLoc, maxLoc;
+	std::vector<cv::Mat> mv;
+	cv::split(img, mv);//切分成三个Mat 每个Mat 是单通道的
+	for (int i = 0; i < mv.size(); i++) {
+		//(宽度, 高度)
+		minMaxLoc(mv[i], &minv, &maxv, &minLoc, &maxLoc, cv::Mat());
+		std::cout << "No. channels:" << i << " min value:" << minv << " max value:" << maxv << std::endl;
+		std::cout << "No. channels:" << i << " minLoc:" << minLoc << " maxLoc:" << maxLoc << std::endl;
+	}
+	cv::Mat mean, stddev;
+	cv::Mat redback = cv::Mat::zeros(img.size(), img.type());
+	redback = cv::Scalar(40, 40, 200);
+	////输入矩阵的数据类型自动转换为 CV_64F 进行计算，确保精度
+	cv::meanStdDev(redback, mean, stddev);
+	imshow("redback", redback);
+	//#define CV_64F  6 返回的是double
+	std::cout << "means:" << mean << std::endl;
+	std::cout << " stddev:" << stddev << std::endl;//这个是三通道的Mat
+	std::cout << " stddev:" << stddev.channels() << std::endl;//存储的是有
+	std::cout << " stddev:" << stddev.size() << std::endl;//存储的是有
 }
 void QuickDemo::trackbar_hsv(cv::Mat & image)
 {
@@ -346,7 +371,7 @@ void QuickDemo::trackbar_hsv(cv::Mat & image)
 	}
 }
 
-cv::Mat & QuickDemo::read_img(const std::string path)
+cv::Mat  QuickDemo::read_img(const std::string & path)
 {
 	// TODO: 在此处插入 return 语句
 	cv::Mat img = cv::imread(path);
