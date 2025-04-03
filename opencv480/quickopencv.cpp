@@ -322,7 +322,7 @@ void QuickDemo::inrange_demo01(void)
 }
 void QuickDemo::pixel_statistic_demo(void)
 {
-	std::string  path= "J:/vs2017ws/data/flower.png";
+	std::string  path= "J:/vs2017ws/data/coins.jpg";
 	cv::Mat  img= read_img(path);
 	std::string in_win_name = "输入窗口";
 	cv::namedWindow(in_win_name);
@@ -349,6 +349,56 @@ void QuickDemo::pixel_statistic_demo(void)
 	std::cout << " stddev:" << stddev << std::endl;//这个是三通道的Mat
 	std::cout << " stddev:" << stddev.channels() << std::endl;//存储的是有
 	std::cout << " stddev:" << stddev.size() << std::endl;//存储的是有
+}
+void QuickDemo::drawing_demo(void)
+{
+	std::string  path = "J:/vs2017ws/data/yuan_test.png";
+	cv::Mat  img = read_img(path);
+	std::string in_win_name = "输入窗口";
+	cv::namedWindow(in_win_name);
+	cv::imshow(in_win_name, img);
+	int x = 130;
+	int y = 30;
+	int width = 230;
+	int height = 260;
+	cv::Rect rect(x,y,width,height);
+	//原图绘制
+	/*rectangle(img, rect, cv::Scalar(0, 0, 255), 1, cv::LINE_8, 0);
+	rectangle(img, rect, cv::Scalar(0, 0, 255), 1, cv::LINE_8, 0);
+	cv::circle(img,cv::Point(247,157),120,1, cv::LINE_8, 0);
+	imshow("绘制演示", img);*/
+	//
+	/*cv::Mat bg = cv::Mat::zeros(img.size(), img.type());
+	rectangle(bg, rect, cv::Scalar(0, 0, 255), -1, cv::LINE_8, 0);
+	cv::line(bg, cv::Point(130, 30), cv::Point(360, 290), 
+		cv::Scalar(0, 255, 0), 2, cv::LINE_8, 0);
+	cv::Mat dst;
+	cv::addWeighted(img, 0.7, bg, 0.3, 0, dst);
+	imshow("绘制演示", dst);*/
+	//
+	cv::Mat bg = cv::Mat::zeros(img.size(), img.type());
+	rectangle(bg, rect, cv::Scalar(0, 0, 255), -1, cv::LINE_8, 0);
+	cv::line(bg, cv::Point(130, 30), cv::Point(360, 290),
+		cv::Scalar(0, 255, 0), 2, cv::LINE_8, 0);
+	cv::Mat dst;
+	cv::RotatedRect rrt;
+	rrt.center = cv::Point(200, 200);
+	rrt.size = cv::Size(100, 200);
+	rrt.angle = 90.0;
+	ellipse(bg, rrt, cv::Scalar(0, 255, 255), 2, 8);
+	cv::addWeighted(img, 0.7, bg, 0.3, 0, dst);
+	imshow("绘制演示", dst);
+	/*circle(bg, cv::Point(350, 400), 15, cv::Scalar(255, 0, 0), -1, 8, 0);
+	line(bg, cv::Point(100, 100), cv::Point(350, 400), cv::Scalar(0, 255, 0), 4, cv::LINE_AA, 0);
+	cv::RotatedRect rrt;
+	rrt.center = cv::Point(200, 200);
+	rrt.size = cv::Size(100, 200);
+	rrt.angle = 90.0;
+	ellipse(bg, rrt, cv::Scalar(0, 255, 255), 2, 8);*/
+	/*cv::Mat dst;
+	addWeighted(img, 0.7, bg, 0.3, 0, dst);
+	imshow("绘制演示", bg);*/
+	
 }
 void QuickDemo::trackbar_hsv(cv::Mat & image)
 {
@@ -378,6 +428,8 @@ cv::Mat  QuickDemo::read_img(const std::string & path)
 	if (img.empty())
 	{
 		throw std::runtime_error("Resource not found: " + path);
+		throw cv::Exception(cv::Error::StsError, "Failed to load image",
+			__func__, __FILE__, __LINE__);
 	}
 	return img;
 

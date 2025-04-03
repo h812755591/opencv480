@@ -19,6 +19,7 @@ public:
 	void inrange_demo(void);
 	void inrange_demo01(void);
 	void pixel_statistic_demo(void);
+	void drawing_demo(void);
 public:
 	static void on_track(int b, void* userdata);
 	//对比度

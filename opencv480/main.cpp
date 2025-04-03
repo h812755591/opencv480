@@ -34,7 +34,8 @@ void test_load_img(string & path= img_path)
 	//qd.inrange_demo();
 	//qd.inrange_demo01();
 	//qd.trackbar_hsv(img);
-	qd.pixel_statistic_demo();
+	//qd.pixel_statistic_demo();
+	qd.drawing_demo();
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 }
