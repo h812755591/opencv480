@@ -36,7 +36,9 @@ void test_load_img(string & path= img_path)
 	//qd.trackbar_hsv(img);
 	//qd.pixel_statistic_demo();
 	//qd.drawing_demo();
-	qd.random_drawing();;
+	//qd.random_drawing();
+	//qd.polyline_drawing_demo();
+	qd.polyline_drawing_hierarchy();
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 }

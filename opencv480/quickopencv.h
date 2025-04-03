@@ -21,6 +21,8 @@ public:
 	void pixel_statistic_demo(void);
 	void drawing_demo(void);
 	void random_drawing(void);
+	void polyline_drawing_demo(void);
+	void polyline_drawing_hierarchy(void);
 public:
 	static void on_track(int b, void* userdata);
 	//对比度

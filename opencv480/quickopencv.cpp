@@ -415,7 +415,7 @@ void QuickDemo::random_drawing(void)
 	//第二次调用还是1 2 3 
 	cv::RNG rng(12345);
 	while (true) {
-		int c = cv::waitKey(1000);
+		int c = cv::waitKey(500);
 		if (c == 27) { // 退出
 			break;
 		}
@@ -435,6 +435,79 @@ void QuickDemo::random_drawing(void)
 
 
 }
+void QuickDemo::polyline_drawing_demo(void) 
+{
+	cv::Mat canvas = cv::Mat::zeros(cv::Size(512, 512),
+		CV_8UC3);
+	int w = canvas.cols;
+	int h = canvas.rows;
+	cv::Point p1(100, 100);
+	cv::Point p2(300, 150);
+	cv::Point p3(300, 350);
+	cv::Point p4(250, 450);
+	cv::Point p5(50, 450);
+	std::vector<cv::Point> pts;
+	pts.push_back(p1);
+	pts.push_back(p2);
+	pts.push_back(p3);
+	pts.push_back(p3);
+	pts.push_back(p4);
+	pts.push_back(p5);
+	pts.push_back(p1);
+
+	//说明可以有多个多边形
+	cv::Point p6(450, 100);
+	cv::Point p7(480, 200);
+	cv::Point p8(500, 300);
+	std::vector<cv::Point> pts1;
+	pts1.push_back(p6);
+	pts1.push_back(p7);
+	pts1.push_back(p8);
+	pts1.push_back(p6); // 闭合多边形
+	std::vector<std::vector<cv::Point>> contours;
+	contours.push_back(pts);
+	contours.push_back(pts1);
+	drawContours(canvas, contours, -1, cv::Scalar(0, 0, 255), -1, cv::LINE_8);
+	
+	imshow("绘制多边形", canvas);
+}
+
+void QuickDemo::polyline_drawing_hierarchy(void)
+{
+	cv::Mat canvas = cv::Mat::zeros(400, 400, CV_8UC3);
+
+	// 定义两个轮廓（外层矩形和内层矩形）
+	std::vector<std::vector<cv::Point>> contours;
+
+	// 外层矩形（索引0）
+	std::vector<cv::Point> outer_rect = {
+		cv::Point(100, 100), cv::Point(300, 100),
+		cv::Point(300, 300), cv::Point(100, 300)
+	};
+	contours.push_back(outer_rect);
+
+	// 内层矩形（索引1）
+	std::vector<cv::Point> inner_rect = {
+		cv::Point(150, 150), cv::Point(250, 150),
+		cv::Point(250, 250), cv::Point(150, 250)
+	};
+	contours.push_back(inner_rect);
+
+	// 定义层次结构
+	std::vector<cv::Vec4i> hierarchy;
+	hierarchy.push_back(cv::Vec4i(-1, -1, 1, -1)); // 外层矩形（父）
+	hierarchy.push_back(cv::Vec4i(-1, -1, -1, 0)); // 内层矩形（子）
+
+	// 绘制轮廓
+	cv::drawContours(
+		canvas, contours, -1, cv::Scalar(0, 255, 0),
+		2, cv::LINE_8, hierarchy, INT_MAX
+	);
+
+	cv::imshow("Manual RETR_TREE", canvas);
+
+}
+
 void QuickDemo::trackbar_hsv(cv::Mat & image)
 {
 	cv::Mat hsv;
