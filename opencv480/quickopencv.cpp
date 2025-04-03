@@ -157,6 +157,8 @@ void QuickDemo::on_track(int b, void * userdata)
 	cv::imshow(win_name, dst);
 }
 
+
+
 void QuickDemo::on_contrast(int b, void * userdata)
 {
 	cv::Mat image = *((cv::Mat*)userdata);
@@ -241,8 +243,62 @@ void QuickDemo::channels_demo(cv::Mat & image)
 	//也可以自动传std::vector<cv::Mat> mv 让cv::split自动变size和源一样
 	std::vector<cv::Mat> mv(channel_num);
 	cv::split(image, mv);//BGR
-	imshow("蓝色", mv[0]);
-	imshow("绿色", mv[1]);
-	imshow("红色", mv[2]);
+	//imshow("蓝色", mv[0]);
+	//imshow("绿色", mv[1]);
+	//imshow("红色", mv[2]);//都是灰度图
+	std::cout << mv[0].channels() << std::endl;
+	//只彰显蓝色通道的值 那么就需要把其它通道的值变为0
+	/*mv[0] = 0;
+	
+	cv::Mat dst;
+	cv::merge(mv,dst);
+	imshow("去掉蓝色", dst);*/
+	cv::Mat dst1(image.size(), CV_8UC3);
+	int from_to[] = { 0,2,1,1,2,0 };
+	cv::mixChannels(&image,1,&dst1,1, from_to,3);
+	cv::imshow("通道混合", dst1);
+}
 
+void QuickDemo::inrange_demo(cv::Mat & image)
+{
+	std::string in_win_name = "输入窗口";
+	cv::namedWindow(in_win_name);
+	cv::imshow(in_win_name, image);
+	cv::Mat hsv;
+	cvtColor(image, hsv, cv::COLOR_BGR2HSV);
+	cv::Mat mask;//mask是对应的二值图
+	cv::inRange(hsv, cv::Scalar(35, 43, 46), cv::Scalar(77, 255, 255), mask);
+	std::string mask_win = "二值化图像";
+	cv::namedWindow(mask_win);
+	cv::imshow(mask_win, mask);
+	//
+	cv::Mat redback = cv::Mat::zeros(image.size(), image.type());
+	//redback = cv::Scalar(40, 40, 200); //这种写法不是很合适
+	redback.setTo(cv::Scalar(40, 40, 200));
+
+	cv::Mat dst_mask;
+	cv::bitwise_not(mask, dst_mask);
+	cv::imshow("not mask", dst_mask);
+	cv::copyTo(image,redback, dst_mask);
+	cv::imshow("roi区域提取", redback);
+}
+void QuickDemo::trackbar_hsv(cv::Mat & image)
+{
+	cv::Mat hsv;
+	cv::cvtColor(image, hsv, cv::COLOR_BGR2HSV);
+	cv::namedWindow("Threshold");
+	int h_min = 0, h_max = 20, s_min = 50, v_min = 50;
+	cv::createTrackbar("H Min", "Threshold", &h_min, 180);
+	cv::createTrackbar("H Max", "Threshold", &h_max, 180);
+	cv::createTrackbar("S Min", "Threshold", &s_min, 255);
+	cv::createTrackbar("V Min", "Threshold", &v_min, 255);
+
+	while (true) {
+		cv::Scalar lower(h_min, s_min, v_min);
+		cv::Scalar upper(h_max, 255, 255);
+		cv::Mat mask;
+		cv::inRange(hsv, lower, upper, mask);
+		cv::imshow("Threshold", mask);
+		if (cv::waitKey(30) == 27) break;  // 按 ESC 退出
+	}
 }

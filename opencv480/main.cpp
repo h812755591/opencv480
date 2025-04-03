@@ -11,7 +11,6 @@ string img_path = "J:/vs2017ws/data/flower.png";
 
 void test_load_img(string & path= img_path)
 {
-	std::cout << "C++ 版本: " << __cplusplus << std::endl;
 	cv::Mat img = cv::imread(path);
 
 	if (img.empty())
@@ -31,7 +30,9 @@ void test_load_img(string & path= img_path)
 	//qd.keyboard_demo(img);
 	//qd.color_style_demo(img);
 	//qd.bitwise_demo(img);
-	qd.channels_demo(img);
+	//qd.channels_demo(img);
+	qd.inrange_demo(img);
+	//qd.trackbar_hsv(img);
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 }
