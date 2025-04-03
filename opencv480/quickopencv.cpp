@@ -593,7 +593,8 @@ void QuickDemo::on_draw(int event, int x, int y, int flags, void* userdata) {
 		sp.y = y;
 		std::cout << "start point:" << sp << std::endl;
 	}
-	else if (event == cv::EVENT_LBUTTONUP) {
+	else if (event == cv::EVENT_LBUTTONUP) 
+	{
 		ep.x = x;
 		ep.y = y;
 		int dx = ep.x - sp.x;
@@ -609,7 +610,8 @@ void QuickDemo::on_draw(int event, int x, int y, int flags, void* userdata) {
 			sp.y = -1;
 		}
 	}
-	else if (event == cv::EVENT_MOUSEMOVE) {
+	else if (event == cv::EVENT_MOUSEMOVE) 
+	{
 		if (sp.x > 0 && sp.y > 0) {
 			ep.x = x;
 			ep.y = y;
@@ -621,6 +623,17 @@ void QuickDemo::on_draw(int event, int x, int y, int flags, void* userdata) {
 				rectangle(image, box, cv::Scalar(0, 0, 255), 2, 8, 0);
 				imshow("鼠标绘制", image);
 			}
+		}
+	}
+	else if (event == cv::EVENT_RBUTTONDOWN)
+	{
+		if (sp.x > 0 || sp.y > 0|| ep.x>0||ep.y>0) {
+			ep.x = -1;
+			ep.y = -1;
+			sp.x = -1;
+			sp.y = -1;
+			temp.copyTo(image);
+			imshow("鼠标绘制", image);
 		}
 	}
 }
