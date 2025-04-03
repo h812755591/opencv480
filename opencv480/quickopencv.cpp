@@ -214,3 +214,35 @@ void QuickDemo::color_style_demo(cv::Mat & image)
 
 
 }
+
+void QuickDemo::bitwise_demo(cv::Mat & image)
+{
+	int width = 256;
+	int height = 256;
+	cv::Mat m1 = cv::Mat::zeros(cv::Size(width, height), CV_8UC3);
+	cv::Mat m2 = cv::Mat::zeros(cv::Size(width, height), CV_8UC3);
+	cv::rectangle(m1, cv::Rect(100, 100, 80, 80), cv::Scalar(255, 255, 0), -1, cv::LINE_8, 0);
+	cv::rectangle(m2, cv::Rect(150, 150, 80, 80), cv::Scalar(0, 255, 255), -1, cv::LINE_8, 0);
+	cv::imshow("m1", m1);
+	cv::imshow("m2", m2);
+	cv::Mat dst;
+	//cv::bitwise_xor(m1, m2, dst);
+	cv::bitwise_or(m1,m2,dst);
+	cv::imshow("像素位操作", dst);
+}
+
+void QuickDemo::channels_demo(cv::Mat & image)
+{
+	std::string in_win_name = "输入窗口";
+	cv::namedWindow(in_win_name);
+	cv::imshow(in_win_name, image);
+	
+	int channel_num=image.channels();
+	//也可以自动传std::vector<cv::Mat> mv 让cv::split自动变size和源一样
+	std::vector<cv::Mat> mv(channel_num);
+	cv::split(image, mv);//BGR
+	imshow("蓝色", mv[0]);
+	imshow("绿色", mv[1]);
+	imshow("红色", mv[2]);
+
+}

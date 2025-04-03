@@ -3,16 +3,16 @@
 #include "quickopencv.h"
 #include "main.h"
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
-string img_path = "J:/vs2017ws/data/yuan_test.png";
+string img_path = "J:/vs2017ws/data/flower.png";
 //string output_path = "J:/vs2017ws/data/";
 
 
 void test_load_img(string & path= img_path)
 {
 	std::cout << "C++ 版本: " << __cplusplus << std::endl;
-	Mat img = imread(path);
+	cv::Mat img = cv::imread(path);
 
 	if (img.empty())
 	{
@@ -29,9 +29,11 @@ void test_load_img(string & path= img_path)
 	//qd.arithmetic_demo1(img);
 	//qd.tracking_bar_demo(img);
 	//qd.keyboard_demo(img);
-	qd.color_style_demo(img);
-	waitKey(0);
-	destroyAllWindows();
+	//qd.color_style_demo(img);
+	//qd.bitwise_demo(img);
+	qd.channels_demo(img);
+	cv::waitKey(0);
+	cv::destroyAllWindows();
 }
 
 int main(int argc,char * argv[])

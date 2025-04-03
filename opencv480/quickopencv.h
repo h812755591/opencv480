@@ -14,6 +14,8 @@ public:
 	void tracking_bar_demo(cv::Mat &image);
 	void keyboard_demo(cv::Mat &image);
 	void color_style_demo(cv::Mat &image);
+	void bitwise_demo(cv::Mat &image);
+	void channels_demo(cv::Mat &image);
 public:
 	static void on_track(int b, void* userdata);
 	//对比度
