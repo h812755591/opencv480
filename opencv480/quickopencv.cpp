@@ -706,3 +706,46 @@ void QuickDemo::norm_demo()
 	cv::imshow("图像数据归一化1", dst1);
 	
 }
+
+void QuickDemo::resize_demo(void)
+{
+	std::string  path = "J:/vs2017ws/data/panchong.jpg";
+	cv::Mat  image = read_img(path);
+	std::string in_win_name = "输入窗口";
+	cv::namedWindow(in_win_name,cv::WINDOW_NORMAL| cv::WINDOW_KEEPRATIO );
+	cv::imshow(in_win_name, image);
+	//
+	cv::Mat zoo_min;
+	cv::Mat zoom_out;
+	int width = image.cols;
+	int height= image.rows;
+	cv::resize(image, zoo_min, cv::Size(width / 2, height / 2), 0, 0, cv::INTER_LANCZOS4);
+	cv::namedWindow("zoomin", cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);
+	cv::imshow("zoomin", zoo_min);
+	//C++ 会进行 ‌隐式截断转换‌（直接舍弃小数部分，不四舍五入）
+	//cv::resize(image, zoom_out, cv::Size(width*1.5, height*1.5), 0, 0, cv::INTER_LINEAR);
+	//cv::imshow("zoom_out", zoom_out);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
