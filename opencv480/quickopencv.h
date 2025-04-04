@@ -25,6 +25,7 @@ public:
 	void polyline_drawing_hierarchy(void);
 	void mouse_drawing_demo(void);
 	void mouse_drawing_demo1(cv::Mat &image);
+	void norm_demo(void);
 public:
 	static void on_track(int b, void* userdata);
 	//对比度

@@ -687,3 +687,22 @@ void QuickDemo::mouse_drawing_demo1(cv::Mat &image) {
 	imshow("鼠标绘制", image);
 	temp = image.clone();
 }
+
+void QuickDemo::norm_demo()
+{
+	
+	std::string path = "J:/vs2017ws/data/yuan_test.png";
+	
+	cv::Mat image = read_img(path);
+	cv::imshow("输入图像", image);
+	cv::Mat dst;
+	std::cout << image.type() << std::endl;//16
+	image.convertTo(dst, CV_32FC3);
+	cv::imshow("转换图像", dst);
+	std::cout << dst.type() << std::endl;//21
+	cv::Mat dst1;
+	cv::normalize(dst, dst1, 0.0, 1.0, cv::NORM_MINMAX);
+	std::cout << dst1.type() << std::endl;//21
+	cv::imshow("图像数据归一化1", dst1);
+	
+}

@@ -39,7 +39,8 @@ void test_load_img(string & path= img_path)
 	//qd.random_drawing();
 	//qd.polyline_drawing_demo();
 	//qd.polyline_drawing_hierarchy();
-	qd.mouse_drawing_demo();
+	//qd.mouse_drawing_demo();
+	qd.norm_demo();
 	//qd.mouse_drawing_demo1(img);
 
 	cv::waitKey(0);
