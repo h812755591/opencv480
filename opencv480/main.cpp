@@ -41,9 +41,10 @@ void test_load_img(string & path= img_path)
 	//qd.polyline_drawing_hierarchy();
 	//qd.mouse_drawing_demo();
 	//qd.norm_demo();
-	qd.resize_demo();
+	//qd.resize_demo();
 	//qd.mouse_drawing_demo1(img);
-
+	//qd.flip_demo();
+	qd.rotate_demo();
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 }

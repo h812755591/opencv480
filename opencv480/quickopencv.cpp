@@ -719,12 +719,53 @@ void QuickDemo::resize_demo(void)
 	cv::Mat zoom_out;
 	int width = image.cols;
 	int height= image.rows;
-	cv::resize(image, zoo_min, cv::Size(width / 2, height / 2), 0, 0, cv::INTER_LANCZOS4);
-	cv::namedWindow("zoomin", cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);
+	cv::resize(image, zoo_min, cv::Size(width / 2, height / 2), 0, 0, cv::INTER_AREA);
+	cv::namedWindow("zoomin", cv::WINDOW_AUTOSIZE | cv::WINDOW_FREERATIO);
 	cv::imshow("zoomin", zoo_min);
 	//C++ 会进行 ‌隐式截断转换‌（直接舍弃小数部分，不四舍五入）
 	//cv::resize(image, zoom_out, cv::Size(width*1.5, height*1.5), 0, 0, cv::INTER_LINEAR);
 	//cv::imshow("zoom_out", zoom_out);
+}
+
+void QuickDemo::flip_demo(void)
+{
+	std::string  path = "J:/vs2017ws/data/flower.png";
+	cv::Mat  image = read_img(path);
+	std::string in_win_name = "输入窗口";
+	cv::namedWindow(in_win_name, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);
+	cv::imshow(in_win_name, image);
+	cv::Mat dst;
+	//上下翻转
+	cv::flip(image, dst, 0);
+	cv::imshow("上下翻转", dst);
+	flip(image, dst, 1); // 左右翻转
+	cv::imshow("左右翻转", dst);
+	cv::flip(image, dst, -1);
+	cv::imshow("双向翻转", dst);
+}
+
+void QuickDemo::rotate_demo(void)
+{
+	std::string  path = "J:/vs2017ws/data/test.png";
+	cv::Mat  image = read_img(path);
+	std::string in_win_name = "输入窗口";
+	cv::namedWindow(in_win_name, cv::WINDOW_AUTOSIZE | cv::WINDOW_KEEPRATIO);
+	cv::imshow(in_win_name, image);
+	//
+	cv::Mat dst;
+	int w = image.cols;
+	int h = image.rows;
+	cv::Mat res = cv::getRotationMatrix2D(cv::Point2f(w / 2, h / 2), 45, 1.0);
+	std::cout << res.size() << std::endl;
+	double cos = abs(res.at<double>(0, 0));//cos(θ)
+	double sin = abs(res.at<double>(0, 1));//sins(θ)
+	int nw = cos * w + sin * h;//计算图像旋转后的新高度‌
+	int nh = sin * w + cos * h;//计算图像旋转后的新宽度‌
+	res.at<double>(0, 2) += (nw / 2 - w / 2);//使原图与新图坐标点对齐
+	res.at<double>(1, 2) += (nh / 2 - h / 2);//
+	//cv::warpAffine(image, dst, res, cv::Size(nw, nh), cv::INTER_LINEAR, 0, cv::Scalar(255, 255, 0));
+	cv::warpAffine(image, dst, res, cv::Size(nw, nh), cv::INTER_LINEAR, cv::BORDER_CONSTANT, cv::Scalar(255, 0, 0));
+	cv::imshow("旋转演示", dst);
 }
 
 
