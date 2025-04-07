@@ -901,6 +901,7 @@ void QuickDemo::video_demo01(void)
 			//在 C++ 中，当比较两个不同类型的操作数时，编译器会进行 ‌整型提升
 			//unsigned char c 会被提升为 int（例如 113 变为 int 类型的 113）
 			//无论 'q'是有符号还是无符号，不影响 但是如果超过127 有影响 
+			// TODO: do something....
 			if (c == 'q') {
 				std::cerr << "退出"<<std::endl;
 				break;
@@ -913,6 +914,51 @@ void QuickDemo::video_demo01(void)
 	//符合“从内到外”的资源释放顺序
 	cap.release();
 	cv::destroyWindow("live"); // 再关闭窗口
+}
+
+void QuickDemo::histogram_demo(void)
+{
+	std::string  path = "J:/vs2017ws/data/flower.png";
+	cv::Mat  image = read_img(path);
+	std::string in_win_name = "输入窗口";
+	cv::namedWindow(in_win_name, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);
+	cv::imshow(in_win_name, image);
+	//将通道分离
+	std::vector < cv::Mat > bgr_plane;//BGR
+	cv::split(image, bgr_plane);
+	//
+	const int bins[1] = { 256 };
+	float hranges[2] = { 0,255 };
+	const float* ranges[1] = { hranges };
+	cv::Mat b_hist;
+	cv::Mat g_hist;
+	cv::Mat r_hist;
+	// 计算Blue, Green, Red通道的直方图
+	cv::calcHist(&bgr_plane[0], 1, 0, cv::Mat(), b_hist, 1, bins, ranges);
+	cv::calcHist(&bgr_plane[1], 1, 0, cv::Mat(), g_hist, 1, bins, ranges);
+	cv::calcHist(&bgr_plane[2], 1, 0, cv::Mat(), r_hist, 1, bins, ranges);
+	//
+	// 显示直方图
+	int hist_w = 512;
+	int hist_h = 400;
+	int bin_w = cvRound((double)hist_w / bins[0]);
+	cv::Mat histImage = cv::Mat::zeros(hist_h, hist_w, CV_8UC3);
+	normalize(b_hist, b_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat());
+	normalize(g_hist, g_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat());
+	normalize(r_hist, r_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat());
+	// 绘制直方图曲线
+	for (int i = 1; i < bins[0]; i++) {
+		line(histImage, cv::Point(bin_w*(i - 1), hist_h - cvRound(b_hist.at<float>(i - 1))),
+			cv::Point(bin_w*(i), hist_h - cvRound(b_hist.at<float>(i))),
+			cv::Scalar(255, 0, 0), 2, 8, 0);
+		line(histImage, cv::Point(bin_w*(i - 1), hist_h - cvRound(g_hist.at<float>(i - 1))),
+			cv::Point(bin_w*(i), hist_h - cvRound(g_hist.at<float>(i))), cv::Scalar(0, 255, 0), 2, 8, 0);
+		line(histImage, cv::Point(bin_w*(i - 1), hist_h - cvRound(r_hist.at<float>(i - 1))),
+			cv::Point(bin_w*(i), hist_h - cvRound(r_hist.at<float>(i))), cv::Scalar(0, 0, 255), 2, 8, 0);
+	}
+	// 显示直方图
+	cv::namedWindow("Histogram Demo", cv::WINDOW_AUTOSIZE);
+	imshow("Histogram Demo", histImage);
 }
 
 
