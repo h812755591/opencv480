@@ -1,7 +1,7 @@
 #include "quickopencv.h"
 #include <string>
 #include <windows.h>  // 必须包含此头文件
-
+#include <fstream>
 void QuickDemo::color_space_demo1(cv::Mat & img)
 {
 	cv::Mat gray;
@@ -746,7 +746,7 @@ void QuickDemo::flip_demo(void)
 
 void QuickDemo::rotate_demo(void)
 {
-	std::string  path = "J:/vs2017ws/data/test.png";
+	std::string  path = "J:/vs2017ws/data/panchong.jpg";
 	cv::Mat  image = read_img(path);
 	std::string in_win_name = "输入窗口";
 	cv::namedWindow(in_win_name, cv::WINDOW_AUTOSIZE | cv::WINDOW_KEEPRATIO);
@@ -759,13 +759,101 @@ void QuickDemo::rotate_demo(void)
 	std::cout << res.size() << std::endl;
 	double cos = abs(res.at<double>(0, 0));//cos(θ)
 	double sin = abs(res.at<double>(0, 1));//sins(θ)
-	int nw = cos * w + sin * h;//计算图像旋转后的新高度‌
-	int nh = sin * w + cos * h;//计算图像旋转后的新宽度‌
+	int nw = static_cast<int>(cos * w + sin * h);//计算图像旋转后的新高度‌
+	int nh = static_cast<int>(sin * w + cos * h);//计算图像旋转后的新宽度‌
 	res.at<double>(0, 2) += (nw / 2 - w / 2);//使原图与新图坐标点对齐
 	res.at<double>(1, 2) += (nh / 2 - h / 2);//
 	//cv::warpAffine(image, dst, res, cv::Size(nw, nh), cv::INTER_LINEAR, 0, cv::Scalar(255, 255, 0));
-	cv::warpAffine(image, dst, res, cv::Size(nw, nh), cv::INTER_LINEAR, cv::BORDER_CONSTANT, cv::Scalar(255, 0, 0));
+	cv::warpAffine(image, dst, res, cv::Size(0.4*nw, 0.4*nh), cv::INTER_LINEAR, cv::BORDER_CONSTANT, cv::Scalar(255, 0, 0));
+	cv::namedWindow("旋转演示", cv::WINDOW_AUTOSIZE | cv::WINDOW_KEEPRATIO);
 	cv::imshow("旋转演示", dst);
+}
+
+void QuickDemo::video_demo(void)
+{
+	//
+	cv::VideoCapture cap("J:/vs2017ws/data/box.mp4", cv::CAP_FFMPEG);
+	//cv::VideoCapture cap("J:/vs2017ws/data/box.mp4", cv::CAP_DSHOW);
+	std::cout << cv::getBuildInformation() << std::endl;//FFMPEG:   YES (prebuilt binaries)
+	if (!cap.isOpened())
+	{
+		return;
+	}
+	else
+	{
+		std::cout << "load is succ" << std::endl;
+	}
+	//
+	int frame_width = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_WIDTH));//640
+	int frame_height = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));//480
+	std::cout << frame_width << std::endl;
+	std::cout << frame_height << std::endl;
+	//如果是摄像头 ，返回-1 如果是文件  用于获取视频文件的 ‌总帧数
+	int count = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_COUNT));
+	/// 方法1：直接获取元数据中的帧率（可能不准确）
+	double fps = cap.get(cv::CAP_PROP_FPS);
+	/*cv::VideoWriter writer("J:/vs2017ws/data/test1.mp4", cap.get(cv::CAP_PROP_FOURCC),
+		fps, cv::Size(frame_width, frame_height), true);*/
+	std::cout <<cap.getBackendName()<<std::endl;//FFMPEG 说明后端使用的是FFMPEG
+	int fourcc_code = static_cast<int>(cap.get(cv::CAP_PROP_FOURCC));
+	char fourcc_str[] = {
+		(char)(fourcc_code & 0xFF),
+		(char)((fourcc_code >> 8) & 0xFF),
+		(char)((fourcc_code >> 16) & 0xFF),
+		(char)((fourcc_code >> 24) & 0xFF),
+		0
+	};
+	std::cout << "视频编码格式: " << fourcc_str << std::endl;  // 视频编码格式: FMP4
+	std::cout << "视频编码格式: " << fourcc_code << std::endl;//视频编码格式: 877677894
+	cv::VideoWriter writer("J:/vs2017ws/data/test.mp4", fourcc_code,
+		fps, cv:: Size(frame_width, frame_height), true);
+	cap.release();
+	writer.release();
+
+
+}
+
+void QuickDemo::video_demo01(void)
+{
+	//cv::VideoCapture cap(0);
+	cv::VideoCapture cap("J:/vs2017ws/data/example_dsh.mp4");
+	if (!cap.isOpened())
+	{
+		return;
+	}
+	else
+	{
+		std::cout << "load is succ" << std::endl;
+		//说明默认用的是cv::CAP_DSHOW  windows  backend is DSHOW
+		std::cout << "backend is "<<cap.getBackendName() << std::endl;
+	}
+	cv::Mat frame;
+	while (true)
+	{
+		cap.read(frame);
+		if (frame.empty())
+		{
+			std::cerr << "ERROR! blank frame grabbed\n";
+			break;
+		}
+		int key = cv::waitKey(50);
+		if (key != -1) {  // 有按键被按下  //没有按键是-1
+			unsigned char c = static_cast<unsigned char>(key);
+			//在 C++ 中，当比较两个不同类型的操作数时，编译器会进行 ‌整型提升
+			//unsigned char c 会被提升为 int（例如 113 变为 int 类型的 113）
+			//无论 'q'是有符号还是无符号，不影响 但是如果超过127 有影响 
+			if (c == 'q') {
+				std::cerr << "退出"<<std::endl;
+				break;
+			}
+		}
+		cv::flip(frame, frame, 1);
+		cv::imshow("live", frame);
+		
+	}
+	//符合“从内到外”的资源释放顺序
+	cv::destroyWindow("live"); // 再关闭窗口
+	cap.release();
 }
 
 

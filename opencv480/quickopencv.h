@@ -29,6 +29,8 @@ public:
 	void resize_demo(void);
 	void flip_demo(void);
 	void rotate_demo(void);
+	void video_demo(void);
+	void video_demo01(void);
 public:
 	static void on_track(int b, void* userdata);
 	//对比度
