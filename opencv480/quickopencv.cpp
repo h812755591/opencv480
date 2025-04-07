@@ -2,6 +2,8 @@
 #include <string>
 #include <windows.h>  // 必须包含此头文件
 #include <fstream>
+#include <chrono>
+#include <opencv2/videoio.hpp>
 void QuickDemo::color_space_demo1(cv::Mat & img)
 {
 	cv::Mat gray;
@@ -768,12 +770,40 @@ void QuickDemo::rotate_demo(void)
 	cv::namedWindow("旋转演示", cv::WINDOW_AUTOSIZE | cv::WINDOW_KEEPRATIO);
 	cv::imshow("旋转演示", dst);
 }
+static void fps_count(cv::VideoCapture & cap)
+{
+	int frame_count = 0;
+	auto start_time = std::chrono::steady_clock::now(); // 记录起始时间
+	while (true) {
+		cv::Mat frame;
+		cap >> frame; // 读取一帧
+		if (frame.empty()) break;
+
+		frame_count++; // 累计帧数
+
+		// 计算经过的时间（秒）
+		auto current_time = std::chrono::steady_clock::now();
+		double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+			current_time - start_time).count() / 1000.0;
+
+		// 实时计算 FPS（每秒更新一次）
+		if (elapsed >= 1.0) {
+			double fps = frame_count / elapsed;
+			std::cout << "FPS: " << fps << std::endl;
+			frame_count = 0; // 重置计数
+			start_time = current_time; // 重置时间
+		}
+
+		// 显示帧（可选）
+		cv::imshow("Video", frame);
+		if (cv::waitKey(1) == 'q') break;
+	}
+}
 
 void QuickDemo::video_demo(void)
 {
 	//
-	cv::VideoCapture cap("J:/vs2017ws/data/box.mp4", cv::CAP_FFMPEG);
-	//cv::VideoCapture cap("J:/vs2017ws/data/box.mp4", cv::CAP_DSHOW);
+	cv::VideoCapture cap("J:/vs2017ws/data/example_dsh.mp4");
 	std::cout << cv::getBuildInformation() << std::endl;//FFMPEG:   YES (prebuilt binaries)
 	if (!cap.isOpened())
 	{
@@ -782,20 +812,22 @@ void QuickDemo::video_demo(void)
 	else
 	{
 		std::cout << "load is succ" << std::endl;
+		std::cout << "backend is " << cap.getBackendName() << std::endl;
 	}
+	//std::cout << "FFmpeg 后端支持: " << cv::getBackendName(cv::CAP_FFMPEG) << std::endl;  // 预期输出 `FFMPEG`‌:ml-citation{ref="2,7" data="citationList"}
+
 	//
 	int frame_width = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_WIDTH));//640
 	int frame_height = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));//480
-	std::cout << frame_width << std::endl;
-	std::cout << frame_height << std::endl;
 	//如果是摄像头 ，返回-1 如果是文件  用于获取视频文件的 ‌总帧数
 	int count = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_COUNT));
-	/// 方法1：直接获取元数据中的帧率（可能不准确）
+	// 方法1：直接获取元数据中的帧率（可能不准确）
+	//每秒多少帧 
 	double fps = cap.get(cv::CAP_PROP_FPS);
-	/*cv::VideoWriter writer("J:/vs2017ws/data/test1.mp4", cap.get(cv::CAP_PROP_FOURCC),
-		fps, cv::Size(frame_width, frame_height), true);*/
-	std::cout <<cap.getBackendName()<<std::endl;//FFMPEG 说明后端使用的是FFMPEG
-	int fourcc_code = static_cast<int>(cap.get(cv::CAP_PROP_FOURCC));
+	std::cout << "fps=" <<fps<< std::endl;//fps=23.976
+	//
+	int fourcc_code = cv::VideoWriter::fourcc('a', 'v', 'c', '1'); 
+	//int fourcc_code = static_cast<int>(cap.get(cv::CAP_PROP_FOURCC));//
 	char fourcc_str[] = {
 		(char)(fourcc_code & 0xFF),
 		(char)((fourcc_code >> 8) & 0xFF),
@@ -804,13 +836,40 @@ void QuickDemo::video_demo(void)
 		0
 	};
 	std::cout << "视频编码格式: " << fourcc_str << std::endl;  // 视频编码格式: FMP4
-	std::cout << "视频编码格式: " << fourcc_code << std::endl;//视频编码格式: 877677894
+	std::cout << fourcc_code << std::endl;//输出877677894
+
+
 	cv::VideoWriter writer("J:/vs2017ws/data/test.mp4", fourcc_code,
-		fps, cv:: Size(frame_width, frame_height), true);
-	cap.release();
+		fps, cv::Size(frame_width, frame_height), true);
+	cv::Mat frame;
+	while (true)
+	{
+		cap.read(frame);
+		if (frame.empty())
+		{
+			std::cerr << "ERROR! blank frame grabbed\n";
+			break;
+		}
+		int key = cv::waitKey(50);
+		if (key != -1) {  // 有按键被按下  //没有按键是-1
+			unsigned char c = static_cast<unsigned char>(key);
+			//在 C++ 中，当比较两个不同类型的操作数时，编译器会进行 ‌整型提升
+			//unsigned char c 会被提升为 int（例如 113 变为 int 类型的 113）
+			//无论 'q'是有符号还是无符号，不影响 但是如果超过127 有影响 
+			if (c == 'q') {
+				std::cerr << "退出" << std::endl;
+				break;
+			}
+		}
+		cv::flip(frame, frame, 1);
+		cv::imshow("live", frame);
+		writer.write(frame);
+	}
+	//符合“从内到外”的资源释放顺序
 	writer.release();
-
-
+	cap.release();
+	cv::destroyWindow("live"); // 再关闭窗口
+	
 }
 
 void QuickDemo::video_demo01(void)
@@ -852,8 +911,8 @@ void QuickDemo::video_demo01(void)
 		
 	}
 	//符合“从内到外”的资源释放顺序
-	cv::destroyWindow("live"); // 再关闭窗口
 	cap.release();
+	cv::destroyWindow("live"); // 再关闭窗口
 }
 
 

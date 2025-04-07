@@ -45,8 +45,8 @@ void test_load_img(string & path= img_path)
 	//qd.mouse_drawing_demo1(img);
 	//qd.flip_demo();
 	//qd.rotate_demo();
-	//qd.video_demo();
-	qd.video_demo01();
+	qd.video_demo();
+	//qd.video_demo01();
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 }
