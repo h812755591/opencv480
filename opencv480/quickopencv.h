@@ -32,6 +32,7 @@ public:
 	void video_demo(void);
 	void video_demo01(void);
 	void histogram_demo(void);
+	void histogram_2d_demo(void);
 public:
 	static void on_track(int b, void* userdata);
 	//对比度

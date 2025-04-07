@@ -961,6 +961,43 @@ void QuickDemo::histogram_demo(void)
 	imshow("Histogram Demo", histImage);
 }
 
+void QuickDemo::histogram_2d_demo(void)
+{
+	std::string  path = "J:/vs2017ws/data/flower.png";
+	cv::Mat  image = read_img(path);
+	std::string in_win_name = "输入窗口";
+	cv::namedWindow(in_win_name, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);
+	cv::imshow(in_win_name, image);
+	//
+	cv::Mat hsv, hs_hist;
+	cv::cvtColor(image, hsv, cv::COLOR_BGR2HSV);
+	int hbins = 30, sbins = 32;
+	int hist_bins[] = { hbins, sbins };
+	float h_range[] = { 0, 180 };
+	float s_range[] = { 0, 256 };
+	const float* hs_ranges[] = { h_range, s_range };
+	int hs_channels[] = { 0, 1 };
+	calcHist(&hsv, 1, hs_channels, cv::Mat(), hs_hist, 2, hist_bins, hs_ranges, true, false);
+	double maxVal = 0;
+	minMaxLoc(hs_hist, 0, &maxVal, 0, 0);
+	int scale = 10;
+	cv::Mat hist2d_image = cv::Mat::zeros(sbins*scale, hbins * scale, CV_8UC3);
+	for (int h = 0; h < hbins; h++) {
+		for (int s = 0; s < sbins; s++)
+		{
+			float binVal = hs_hist.at<float>(h, s);
+			int intensity = cvRound(binVal * 255 / maxVal);
+			rectangle(hist2d_image, cv::Point(h*scale, s*scale),
+				cv::Point((h + 1)*scale - 1, (s + 1)*scale - 1),
+				cv::Scalar::all(intensity),
+				-1);
+		}
+	}
+	//applyColorMap(hist2d_image, hist2d_image, cv::COLORMAP_JET);
+	imshow("H-S Histogram", hist2d_image);
+	imwrite("J:/vs2017ws/data/hist_2d.png", hist2d_image);
+}
+
 
 
 
