@@ -1096,7 +1096,7 @@ void QuickDemo::blur_demo(void)
 
 void QuickDemo::gaussian_blur_demo(void)
 {
-	std::string  path = "J:/vs2017ws/data/example.png";
+	std::string  path = "J:/vs2017ws/data/hist_02.jpg";
 	cv::Mat  image = read_img(path);
 	std::string in_win_name = "输入窗口";
 	/*cv::namedWindow(in_win_name, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);*/
@@ -1105,6 +1105,25 @@ void QuickDemo::gaussian_blur_demo(void)
 	cv::Mat dst;
 	GaussianBlur(image, dst, cv::Size(0, 0), 2.0);
 	imshow("高斯模糊", dst);
+}
+
+void QuickDemo::bifilter_demo(void)
+{
+	std::string  path = "J:/vs2017ws/data/panchong.jpg";
+	cv::Mat  image = read_img(path);
+	std::string in_win_name = "输入窗口";
+	cv::namedWindow(in_win_name, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);
+	cv::namedWindow("高斯模糊", cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);
+	cv::namedWindow("双边模糊", cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);
+	cv::imshow(in_win_name, image);
+	//
+	cv::Mat dst;
+	cv::bilateralFilter(image, dst, 0, 100, 10);
+	cv::Mat dst1;
+	GaussianBlur(image, dst1, cv::Size(0, 0), 2.0);
+	imshow("高斯模糊", dst1);
+	cv::imshow("双边模糊", dst);
+
 }
 
 
