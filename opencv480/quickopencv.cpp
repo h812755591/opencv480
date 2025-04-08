@@ -960,7 +960,59 @@ void QuickDemo::histogram_demo(void)
 	cv::namedWindow("Histogram Demo", cv::WINDOW_AUTOSIZE);
 	imshow("Histogram Demo", histImage);
 }
-
+void QuickDemo::histogram_demo_han(void)
+{
+	//读取图片
+	std::string  path = "J:/vs2017ws/data/flower.png";
+	cv::Mat  image = read_img(path);
+	std::string in_win_name = "输入窗口";
+	cv::namedWindow(in_win_name, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);
+	cv::imshow(in_win_name, image);
+	//统计B通道直方图
+	//1，讲B通道分离出来
+	std::vector<cv::Mat> mv;
+	cv::split(image, mv);
+	//
+	const int bins[1] = { 256 };
+	float ranges[] = { 0, 256 };// 像素值范围（左闭右开）像素值范围 [0, 256)，包含 0~255
+	const float* histRanges[] = { ranges };//划分的bin也是左闭右开() 255-0+1=256/bins=1
+	//统计channels 统计哪些通道的
+	int channels[] = { 0 };
+	cv::Mat b_hist;
+	//bins参数表示有多少个bin 
+	//histRanges 表示bin表示的数据范围
+	//histRanges 和 bins 表示0-255 范围 分成256个bin
+	//mv.data()  返回第一个元素的地址
+	cv::calcHist(&mv[0], 1, channels, cv::Mat(), b_hist, 1, bins, histRanges);  // B通道（数组索引0）
+	//
+	cv::Mat g_hist;
+	cv::calcHist(&mv[1], 1, channels, cv::Mat(), g_hist, 1, bins, histRanges);
+	//
+	cv::Mat r_hist;
+	cv::calcHist(&mv[2], 1, channels, cv::Mat(), r_hist, 1, bins, histRanges);
+	//
+	// 显示直方图
+	int hist_w = 512;
+	int hist_h = 400;
+	int bin_w = cvRound((double)hist_w / bins[0]);
+	cv::Mat histImage = cv::Mat::zeros(hist_h, hist_w, CV_8UC3);
+	// 归一化直方图数据
+	normalize(b_hist, b_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat());
+	normalize(g_hist, g_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat());
+	normalize(r_hist, r_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat());
+	//
+	for (int i = 1; i < bins[0]; i++) {
+		line(histImage, cv::Point(bin_w*(i - 1), hist_h - cvRound(b_hist.at<float>(i - 1))),
+			cv::Point(bin_w*(i), hist_h - cvRound(b_hist.at<float>(i))), cv::Scalar(255, 0, 0), 2, 8, 0);
+		/*line(histImage, cv::Point(bin_w*(i - 1), hist_h - cvRound(g_hist.at<float>(i - 1))),
+			cv::Point(bin_w*(i), hist_h - cvRound(g_hist.at<float>(i))), cv::Scalar(0, 255, 0), 2, 8, 0);
+		line(histImage, cv::Point(bin_w*(i - 1), hist_h - cvRound(r_hist.at<float>(i - 1))),
+			Point(bin_w*(i), hist_h - cvRound(r_hist.at<float>(i))), cv::Scalar(0, 0, 255), 2, 8, 0);*/
+	}
+	// 显示直方图
+	cv::namedWindow("Histogram Demo", cv::WINDOW_AUTOSIZE);
+	cv::imshow("Histogram Demo", histImage);
+}
 void QuickDemo::histogram_2d_demo(void)
 {
 	std::string  path = "J:/vs2017ws/data/flower.png";
