@@ -34,6 +34,9 @@ public:
 	void histogram_demo(void);
 	void histogram_demo_han(void);
 	void histogram_2d_demo(void);
+	void histogram_eq_demo(void);
+	void blur_demo(void);
+	void gaussian_blur_demo(void);
 public:
 	static void on_track(int b, void* userdata);
 	//对比度

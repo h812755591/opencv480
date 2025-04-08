@@ -1050,6 +1050,62 @@ void QuickDemo::histogram_2d_demo(void)
 	imwrite("J:/vs2017ws/data/hist_2d.png", hist2d_image);
 }
 
+void QuickDemo::histogram_eq_demo(void)
+{
+	std::string  path = "J:/vs2017ws/data/flower.png";
+	cv::Mat  image = read_img(path);
+	std::string in_win_name = "输入窗口";
+	cv::namedWindow(in_win_name, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);
+	cv::imshow(in_win_name, image);
+	//
+	// 转换为 HSV 颜色空间
+	cv::Mat hsv;
+	cv::cvtColor(image, hsv, cv::COLOR_BGR2HSV);
+	//
+	// 分离通道：H（色调）、S（饱和度）、V（亮度）
+	std::vector<cv::Mat> channels;
+	cv::split(hsv, channels);
+	//
+	// 3. 仅对 V 通道（索引2）做直方图均衡化
+	cv::equalizeHist(channels[2], channels[2]);  // 输入和输出均为 V 通道
+
+	cv::merge(channels, hsv);
+	cv::Mat result;
+	cv::cvtColor(hsv, result, cv::COLOR_HSV2BGR);
+	cv::imshow("直方图均衡化演示", result);
+}
+
+void QuickDemo::blur_demo(void)
+{
+	std::string  path = "J:/vs2017ws/data/example.png";
+	cv::Mat  image = read_img(path);
+	std::string in_win_name = "输入窗口";
+	/*cv::namedWindow(in_win_name, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);*/
+	cv::imshow(in_win_name, image);
+	//
+	cv::Mat dst;
+	//卷积核越大，模糊效果越大
+	//blur(image, dst, cv::Size(15, 15), cv::Point(-1, -1));
+	//blur(image, dst, cv::Size(3, 3), cv::Point(-1, -1));
+	//水平方向卷积 这种设置表示只在水平方向进行模糊（7像素宽），垂直方向几乎不模糊
+	blur(image, dst, cv::Size(7, 1), cv::Point(-1, -1));
+	//垂直方向卷积
+	//blur(image, dst, cv::Size(1, 7), cv::Point(-1, -1));
+	imshow("图像模糊", dst);
+}
+
+void QuickDemo::gaussian_blur_demo(void)
+{
+	std::string  path = "J:/vs2017ws/data/example.png";
+	cv::Mat  image = read_img(path);
+	std::string in_win_name = "输入窗口";
+	/*cv::namedWindow(in_win_name, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);*/
+	cv::imshow(in_win_name, image);
+	//
+	cv::Mat dst;
+	GaussianBlur(image, dst, cv::Size(0, 0), 2.0);
+	imshow("高斯模糊", dst);
+}
 
 
 

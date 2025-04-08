@@ -48,8 +48,10 @@ void test_load_img(string & path= img_path)
 	//qd.video_demo();
 	//qd.video_demo01();
 	//qd.histogram_demo();
-	qd.histogram_demo_han();
+	//qd.histogram_demo_han();
+	//qd.histogram_eq_demo();
 	//qd.histogram_2d_demo();
+	qd.blur_demo();
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 }
