@@ -38,6 +38,7 @@ public:
 	void blur_demo(void);
 	void gaussian_blur_demo(void);
 	void bifilter_demo(void);
+	void face_detection_demo(void);
 public:
 	static void on_track(int b, void* userdata);
 	//对比度

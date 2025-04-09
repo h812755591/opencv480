@@ -265,3 +265,8 @@ __pycache__/
 **/opencv480.vcxproj.user
 **/opencv480.vcxproj
 x64/
+/face_detector/face_detector.vcxproj
+/face_detector/face_detector.vcxproj.filters
+**/opencv480.sln
+/opencv480_test/opencv480_test.vcxproj
+/opencv480_test/opencv480_test.vcxproj.filters

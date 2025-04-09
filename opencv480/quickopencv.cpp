@@ -1126,6 +1126,13 @@ void QuickDemo::bifilter_demo(void)
 
 }
 
+void QuickDemo::face_detection_demo(void)
+{
+	std::string root_dir = "D:/opencv-4.4.0/opencv/sources/samples/dnn/face_detector/";
+	cv::dnn::Net net = cv::dnn::readNetFromTensorflow(root_dir + "opencv_face_detector_uint8.pb", root_dir + "opencv_face_detector.pbtxt");
+	cv::VideoCapture capture("D:/images/video/example_dsh.mp4");
+}
+
 
 
 
