@@ -1109,7 +1109,7 @@ void QuickDemo::gaussian_blur_demo(void)
 
 void QuickDemo::bifilter_demo(void)
 {
-	std::string  path = "J:/vs2017ws/data/panchong.jpg";
+	std::string  path = "J:/vs2017ws/data/example.png";
 	cv::Mat  image = read_img(path);
 	std::string in_win_name = "输入窗口";
 	cv::namedWindow(in_win_name, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);
