@@ -9,8 +9,8 @@ int main(int argc, char * argv[])
 	//binary.binary_demo01();
 	//binary.binary_demo02_THRESH_BINARY_INV();
 	//binary.binary_demo02_all();
-	binary.binary_demo03_otsu();
-
+	//binary.binary_demo03_otsu();
+	binary.binary_demo04_local();
 	//
 	cv::waitKey(0);
 	cv::destroyAllWindows();
