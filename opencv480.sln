@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "face_detector", "face_detec
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "opencv480_test", "opencv480_test\opencv480_test.vcxproj", "{33262B21-5634-43FA-9735-BDDCEAADDC06}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "opencv480_20", "opencv480_20\opencv480_20.vcxproj", "{76A38A5D-ED27-4AB3-B6F5-14868E007D96}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +43,14 @@ Global
 		{33262B21-5634-43FA-9735-BDDCEAADDC06}.Release|x64.Build.0 = Release|x64
 		{33262B21-5634-43FA-9735-BDDCEAADDC06}.Release|x86.ActiveCfg = Release|Win32
 		{33262B21-5634-43FA-9735-BDDCEAADDC06}.Release|x86.Build.0 = Release|Win32
+		{76A38A5D-ED27-4AB3-B6F5-14868E007D96}.Debug|x64.ActiveCfg = Debug|x64
+		{76A38A5D-ED27-4AB3-B6F5-14868E007D96}.Debug|x64.Build.0 = Debug|x64
+		{76A38A5D-ED27-4AB3-B6F5-14868E007D96}.Debug|x86.ActiveCfg = Debug|Win32
+		{76A38A5D-ED27-4AB3-B6F5-14868E007D96}.Debug|x86.Build.0 = Debug|Win32
+		{76A38A5D-ED27-4AB3-B6F5-14868E007D96}.Release|x64.ActiveCfg = Release|x64
+		{76A38A5D-ED27-4AB3-B6F5-14868E007D96}.Release|x64.Build.0 = Release|x64
+		{76A38A5D-ED27-4AB3-B6F5-14868E007D96}.Release|x86.ActiveCfg = Release|Win32
+		{76A38A5D-ED27-4AB3-B6F5-14868E007D96}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
