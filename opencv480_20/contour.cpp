@@ -102,15 +102,28 @@ void ContourMy::contour_demo02_area(void)
 		std::vector<cv::Point> contour_tmp = contours[i];
 		double area=cv::contourArea(contour_tmp);
 		double len = cv::arcLength(contour_tmp,true);
-		cout << "area=" << area << " len=" << len << endl;
+		
 		if (area<100||len<10)
 		{
 			continue;
 		}
 		//cv::drawContours(image, contours, static_cast<int>(i), Scalar(0, 0, 255), 1, 8);
-		cv::Rect box=cv::boundingRect(contours[i]);
-		cv::rectangle(image, box, cv::Scalar(0, 0, 255), 1, 8, 0);
+		/*cv::Rect box=cv::boundingRect(contours[i]);
+		cv::rectangle(image, box, cv::Scalar(0, 0, 255), 1, 8, 0);*/
+		cv::RotatedRect box=cv::minAreaRect(contour_tmp);
+		//
+		cv::Point2f vertices[4];
+		box.points(vertices);
 
+		std::vector<cv::Point> int_vertices;
+		for (int i = 0; i < 4; i++) {
+			int_vertices.push_back(cv::Point(
+				static_cast<int>(vertices[i].x),
+				static_cast<int>(vertices[i].y)));
+		}
+		//最小外接矩形
+		cv::polylines(image, int_vertices, true, cv::Scalar(0, 255, 0), 1, 8);
+		cout << "area=" << area << " len=" << len <<" angle=" <<box.angle <<endl;
 	}
 	const string contour_window_name1 = "contour图窗口";
 	imshow(contour_window_name1, image);
