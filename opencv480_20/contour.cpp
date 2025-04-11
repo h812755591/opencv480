@@ -33,16 +33,29 @@ void ContourMy::contour_demo01_find(void)
 	double thres2 = cv::threshold(gray, binary,
 		0, 255, cv::THRESH_OTSU | cv::THRESH_BINARY);
 	const string binary_threshold_window_name1 = "threshold二值图窗口";
-	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+	
 	//进行腐蚀 消除由于高斯模糊带来的目标物体面积增加的问题
+	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
 	cv::erode(binary, binary, kernel, cv::Point(-1, -1), 1);
 	imshow(binary_threshold_window_name1, binary);
 	//获取轮廓 Vec<int, 4> 4个int 向量
 	std::vector<std::vector<cv::Point>> contours;
 	std::vector<cv::Vec4i> hirearchy;
-	cv::findContours(binary,contours,cv::RETR_TREE,
-		cv::CHAIN_APPROX_SIMPLE,cv::Point(0,0));
-	cv::drawContours(image,contours,-1,Scalar(0,0,255),2,8);
+	/*cv::findContours(binary,contours, hirearchy,cv::RETR_TREE,
+		cv::CHAIN_APPROX_SIMPLE,cv::Point(0,0));*/
+	cv::findContours(binary, contours, hirearchy, cv::RETR_TREE,
+		cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+	/*cv::findContours(binary, contours, hirearchy, cv::RETR_TREE,
+		cv::CHAIN_APPROX_NONE, cv::Point(0, 0));*/
+	//size_t 无符号整数类型unsigned long long
+	for (size_t  i=0;i< contours.size();i++)
+	{
+		cv::drawContours(image, contours, i, Scalar(0, 0, 255), 1, 8);
+		cv::Point pt = contours[i][0]; // 取轮廓首个点坐标
+		cv::putText(image, std::to_string(i), pt, 
+			cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 255));
+	}
+	//cv::drawContours(image,contours,-1,Scalar(0,0,255),1,8);
 	const string contour_window_name1 = "contour图窗口";
 	imshow(contour_window_name1, image);
 }
