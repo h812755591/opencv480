@@ -1,0 +1,48 @@
+#include <iostream>
+#include <opencv2/opencv.hpp>
+#include "util.h"
+#include "contour.h"
+
+using std::cout;
+using std::cin;
+using std::endl;
+using std::string;
+using cv::Mat;
+using cv::imread;
+using cv::Scalar;
+using namespace cv::dnn;
+void ContourMy::contour_demo01_find(void)
+{
+	//读取图像
+	const string path = "J:/vs2017ws/data/rice.png";
+	Mat image = util::read_img(path);
+	string in_win_name = "输入窗口";
+	int windows_style = cv::WINDOW_AUTOSIZE | cv::WINDOW_FREERATIO;
+	cv::namedWindow(in_win_name, windows_style);
+	imshow(in_win_name, image);
+	//高斯模糊
+	cv::Mat gauss_dst;
+	GaussianBlur(image, gauss_dst, cv::Size(3, 3),5);
+	const string gauss_window_name1 = "gauss图窗口";
+	imshow(gauss_window_name1, gauss_dst);
+	//转灰度图
+	Mat gray;
+	cv::cvtColor(gauss_dst, gray, cv::COLOR_BGR2GRAY);
+	//全局二值化
+	Mat binary;
+	double thres2 = cv::threshold(gray, binary,
+		0, 255, cv::THRESH_OTSU | cv::THRESH_BINARY);
+	const string binary_threshold_window_name1 = "threshold二值图窗口";
+	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+	//进行腐蚀 消除由于高斯模糊带来的目标物体面积增加的问题
+	cv::erode(binary, binary, kernel, cv::Point(-1, -1), 1);
+	imshow(binary_threshold_window_name1, binary);
+	//获取轮廓 Vec<int, 4> 4个int 向量
+	std::vector<std::vector<cv::Point>> contours;
+	std::vector<cv::Vec4i> hirearchy;
+	cv::findContours(binary,contours,cv::RETR_TREE,
+		cv::CHAIN_APPROX_SIMPLE,cv::Point(0,0));
+	cv::drawContours(image,contours,-1,Scalar(0,0,255),2,8);
+	const string contour_window_name1 = "contour图窗口";
+	imshow(contour_window_name1, image);
+}

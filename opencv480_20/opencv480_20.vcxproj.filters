@@ -27,6 +27,9 @@
     <ClCompile Include="util.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="contour.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="util.h">
@@ -36,6 +39,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="connected_component.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="contour.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

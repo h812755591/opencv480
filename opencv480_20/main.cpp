@@ -2,7 +2,7 @@
 #include <opencv2/opencv.hpp>
 #include "binary.h"
 #include "connected_component.h" 
-
+#include "contour.h"
 int main(int argc, char * argv[])
 {
 	//二值化
@@ -13,8 +13,12 @@ int main(int argc, char * argv[])
 	//binary.binary_demo03_otsu();
 	//binary.binary_demo04_local();
 	//连通组件
-	ConnectedComponent cc;
-	cc.connected_component_demo01();
+	//ConnectedComponent cc;
+	//cc.connected_component_demo01();
+	//cc.connected_component_demo02_stats();
+	//轮廓
+	ContourMy cy;
+	cy.contour_demo01_find();
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 	return 0;
