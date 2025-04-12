@@ -5,6 +5,6 @@
 
 namespace util
 {
-	cv::Mat  read_img(const std::string & path);
+	cv::Mat  read_img(const std::string & path);//
 
 }

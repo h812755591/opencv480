@@ -1,8 +1,9 @@
-﻿#include <iostream>
+#include <iostream>
 #include <opencv2/opencv.hpp>
 #include "binary.h"
 #include "connected_component.h" 
 #include "contour.h"
+
 int main(int argc, char * argv[])
 {
 	//二值化
