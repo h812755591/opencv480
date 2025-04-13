@@ -178,7 +178,69 @@ void ContourMy::contour_demo03_match(void)
 	cout << contours_src.size() << endl;
 	std::vector<std::vector<cv::Point>> contours_match;
 	contour_info(image_src, contours_src);
+	contour_info(image_match, contours_match);
 	cout << contours_src[0].size() << endl;
+	cout << contours_match[0].size() << endl;
 	//draw_contour(contours_src, image_src);
-
+	cv::Moments mm2 = cv::moments(contours_match[0]);
+	Mat hu2;
+	cv::HuMoments(mm2, hu2);
+	for (size_t t = 0; t < contours_src.size(); t++) {
+		cv::Moments mm = cv::moments(contours_src[t]);
+		double cx = mm.m10 / mm.m00;//质心x坐标
+		double cy = mm.m01 / mm.m00;//质心y坐标
+		int x = cvRound(cx);
+		int y = cvRound(cy);
+		circle(image_src, cv::Point(x, y), 3, Scalar(255, 0, 0), 2, 8, 0);
+		Mat hu;
+		HuMoments(mm, hu);
+		double dist = matchShapes(hu, hu2, cv::CONTOURS_MATCH_I1, 0);
+		if (dist < 1.0) {
+			printf("matched distance value : %.2f\n", dist);
+			drawContours(image_src, contours_src, static_cast<int>(t), Scalar(0, 0, 255), 2, 8);
+		}
+	}
+	imshow("match contours demo", image_src);
+}
+void ContourMy::contour_demo03_match02(void)
+{
+	//读取图像
+	const string src_path = "J:/vs2017ws/data/abc.png";
+	const string math_path = "J:/vs2017ws/data/a.png";
+	Mat image_src = util::read_img(src_path);
+	Mat image_match = util::read_img(math_path);
+	const string src_win_name = "src窗口";
+	const string match_win_name = "match窗口";
+	int windows_style = cv::WINDOW_AUTOSIZE | cv::WINDOW_FREERATIO;
+	cv::namedWindow(src_win_name, windows_style);
+	cv::namedWindow(match_win_name, windows_style);
+	imshow(src_win_name, image_src);
+	imshow(match_win_name, image_match);
+	//
+	std::vector<std::vector<cv::Point>> contours_src;
+	cout << contours_src.size() << endl;
+	std::vector<std::vector<cv::Point>> contours_match;
+	contour_info(image_src, contours_src);
+	contour_info(image_match, contours_match);
+	cout << contours_src[0].size() << endl;
+	cout << contours_match[0].size() << endl;
+	//draw_contour(contours_src, image_src);
+	/*cv::Moments mm2 = cv::moments(contours_match[0]);
+	Mat hu2;
+	cv::HuMoments(mm2, hu2);*/
+	for (size_t t = 0; t < contours_src.size(); t++) {
+		cv::Moments mm = cv::moments(contours_src[t]);
+		double cx = mm.m10 / mm.m00;//质心x坐标
+		double cy = mm.m01 / mm.m00;//质心y坐标
+		int x = cvRound(cx);
+		int y = cvRound(cy);
+		circle(image_src, cv::Point(x, y), 3, Scalar(255, 0, 0), 2, 8, 0);
+		
+		double dist = matchShapes(contours_src[t], contours_match[0], cv::CONTOURS_MATCH_I1, 0);
+		if (dist < 0.5) {
+			printf("matched distance value : %.2f\n", dist);
+			drawContours(image_src, contours_src, static_cast<int>(t), Scalar(0, 0, 255), 2, 8);
+		}
+	}
+	imshow("match contours demo", image_src);
 }
