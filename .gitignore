@@ -270,3 +270,7 @@ x64/
 **/opencv480.sln
 /opencv480_test/opencv480_test.vcxproj
 /opencv480_test/opencv480_test.vcxproj.filters
+**/*.vcxproj.filters
+**/*.vcxproj.user
+**/*.vcxproj
+
