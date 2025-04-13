@@ -128,3 +128,57 @@ void ContourMy::contour_demo02_area(void)
 	const string contour_window_name1 = "contour图窗口";
 	imshow(contour_window_name1, image);
 }
+namespace {  // 匿名命名空间
+	void contour_info(Mat &image, 
+		std::vector<std::vector<cv::Point>> &contours)
+	{  
+		// 二值化
+		cv::Mat gauss_dst;
+		GaussianBlur(image, gauss_dst, cv::Size(3, 3), 0);//如果不指定标准差 根据滤波核进行计算
+		
+		Mat gray, binary;
+		cvtColor(gauss_dst, gray, cv::COLOR_BGR2GRAY);
+		threshold(gray, binary, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
+
+		// 轮廓发现
+		std::vector<cv::Vec4i> hirearchy;
+		findContours(binary, contours, hirearchy, 
+			cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE, cv::Point());
+	};
+	void draw_contour(const std::vector<std::vector<cv::Point>> &contours, Mat &image)
+	{
+		for (size_t i = 0; i < contours.size(); i++)
+		{
+			cv::drawContours(image, contours, static_cast<int>(i), Scalar(0, 0, 255), 1, 8);
+			cv::Point pt = contours[i][0]; // 取轮廓首个点坐标
+			cv::putText(image, std::to_string(i), pt,
+				cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 255));
+		}
+		//cv::drawContours(image,contours,-1,Scalar(0,0,255),1,8);
+		const string contour_window_name1 = "contour图窗口";
+		imshow(contour_window_name1, image);
+	}
+}
+void ContourMy::contour_demo03_match(void)
+{
+	//读取图像
+	const string src_path = "J:/vs2017ws/data/abc.png";
+	const string math_path = "J:/vs2017ws/data/a.png";
+	Mat image_src = util::read_img(src_path);
+	Mat image_match = util::read_img(math_path);
+	const string src_win_name = "src窗口";
+	const string match_win_name = "match窗口";
+	int windows_style = cv::WINDOW_AUTOSIZE | cv::WINDOW_FREERATIO;
+	cv::namedWindow(src_win_name, windows_style);
+	cv::namedWindow(match_win_name, windows_style);
+	imshow(src_win_name, image_src);
+	imshow(match_win_name, image_match);
+	//
+	std::vector<std::vector<cv::Point>> contours_src;
+	cout << contours_src.size() << endl;
+	std::vector<std::vector<cv::Point>> contours_match;
+	contour_info(image_src, contours_src);
+	cout << contours_src[0].size() << endl;
+	//draw_contour(contours_src, image_src);
+
+}

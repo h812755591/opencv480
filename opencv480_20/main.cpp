@@ -20,7 +20,8 @@ int main(int argc, char * argv[])
 	//轮廓
 	ContourMy cy;
 	//cy.contour_demo01_find();
-	cy.contour_demo02_area();
+	//cy.contour_demo02_area();
+	cy.contour_demo03_match();
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 	return 0;
