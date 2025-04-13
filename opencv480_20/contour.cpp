@@ -351,11 +351,23 @@ void ContourMy::contour_demo04_fit_circle01(void)
 			pt,
 			cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 255));
 		cv::RotatedRect rrt = cv::fitEllipse(contour_tmp);
-		float w = rrt.size.width;
-		float h = rrt.size.height;
-		cv::Point center = rrt.center;
+		/*float w = rrt.size.width;
+		float h = rrt.size.height;*/
+		
+		//cv::Point center = rrt.center;
+		cv::Point2f center = rrt.center;
 		cv::circle(image_src, center, 3, Scalar(255, 0, 0), 2, 8, 0);
-		ellipse(image_src, rrt, Scalar(0, 255, 0), 2, 8);
+		//ellipse(image_src, rrt, Scalar(0, 255, 0), 2, cv::LINE_8);
+		cv::ellipse(
+			image_src,
+			rrt.center,
+			cv::Size2f(rrt.size.width/2, rrt.size.height/2),
+			rrt.angle,
+			0, 360,
+			cv::Scalar(0, 255, 0),
+			2,  // thickness
+			cv::LINE_8  // lineType
+		);
 	}
 	//
 	imshow("fit result", image_src);
