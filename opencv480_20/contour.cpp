@@ -244,3 +244,61 @@ void ContourMy::contour_demo03_match02(void)
 	}
 	imshow("match contours demo", image_src);
 }
+
+void ContourMy::contour_demo04_approxi01(void)
+{
+	const string src_path = "J:/vs2017ws/data/contours.png";
+	Mat image_src = util::read_img(src_path);
+	const string src_win_name = "src窗口";
+	int windows_style = cv::WINDOW_AUTOSIZE | cv::WINDOW_FREERATIO;
+	cv::namedWindow(src_win_name, windows_style);
+	imshow(src_win_name, image_src);
+	//获取轮廓
+	std::vector<std::vector<cv::Point>> contours_src;
+	contour_info(image_src, contours_src);
+	printf("提取轮廓数量：%zu\n", contours_src.size());//提取轮廓数量 4
+	
+	//多边形逼近
+	for (size_t i = 0; i < contours_src.size(); i++)
+	{
+		std::vector<cv::Point> contour_my = contours_src[i];
+		cv::Moments mm = cv::moments(contour_my);
+		//double cx = mm.m10 / mm.m00;
+		//double cy = mm.m01 / mm.m00;
+		int x = cvRound(mm.m10 / mm.m00);
+		int y = cvRound(mm.m01 / mm.m00);
+		double area = cv::contourArea(contour_my);
+		double clen = cv::arcLength(contour_my, true);
+		circle(image_src, cv::Point(x, y), 3, Scalar(255, 0, 0), 2, 8, 0);
+		std::vector<cv::Point> result;
+		double epsilon = clen * 0.02;  // 2%的周长‌
+		cout << "epsilon=" << epsilon << endl;
+		//cv::approxPolyDP(contour_my, result, 4, true);
+		cv::approxPolyDP(contour_my, result, epsilon, true);
+		printf("corners : %zu , contour area : %.2f, contour length : %.2f \n", 
+			result.size(), area, clen);
+		if (result.size() == 6) 
+		{
+			putText(image_src, "poly", cv::Point(x, y - 10), 
+				cv::FONT_HERSHEY_PLAIN, 1.0, Scalar(0, 0, 255), 1, 8);
+			
+		}
+		if (result.size() == 4) 
+		{
+			putText(image_src, "rectangle", cv::Point(x, y - 10),
+				cv::FONT_HERSHEY_PLAIN, 1.0, Scalar(0, 255, 255), 1, 8);
+		}
+		if (result.size() == 3) 
+		{
+			putText(image_src, "triangle", cv::Point(x, y - 10),
+				cv::FONT_HERSHEY_PLAIN, 1.0, Scalar(255, 0, 255), 1, 8);
+		}
+		if (result.size() > 10) 
+		{//圆的角点很多
+			putText(image_src, "circle", cv::Point(x, y - 10),
+				cv::FONT_HERSHEY_PLAIN, 1.0, Scalar(255, 255, 0), 1, 8);
+		}
+		polylines(image_src, result, true, Scalar(0, 255, 0), 2);
+	}
+	imshow("find contours demo", image_src);
+}

@@ -21,7 +21,8 @@ int main(int argc, char * argv[])
 	ContourMy cy;
 	//cy.contour_demo01_find();
 	//cy.contour_demo02_area();
-	cy.contour_demo03_match();
+	//cy.contour_demo03_match();
+	cy.contour_demo04_approxi01();//多边形逼近
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 	return 0;
