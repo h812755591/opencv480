@@ -130,7 +130,7 @@ void ContourMy::contour_demo02_area(void)
 }
 namespace {  // 匿名命名空间
 	void contour_info(Mat &image, 
-		std::vector<std::vector<cv::Point>> &contours)
+		std::vector<std::vector<cv::Point>> &contours,bool show_binary=false,int type= cv::THRESH_BINARY | cv::THRESH_OTSU)
 	{  
 		// 二值化
 		cv::Mat gauss_dst;
@@ -138,8 +138,14 @@ namespace {  // 匿名命名空间
 		
 		Mat gray, binary;
 		cvtColor(gauss_dst, gray, cv::COLOR_BGR2GRAY);
-		threshold(gray, binary, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
-
+		threshold(gray, binary, 0, 255, type);
+		if (show_binary)
+		{
+			const string binary_win_name = "binary1窗口";
+			int windows_style = cv::WINDOW_AUTOSIZE | cv::WINDOW_FREERATIO;
+			cv::namedWindow(binary_win_name, windows_style);
+			imshow(binary_win_name, binary);
+		}
 		// 轮廓发现
 		std::vector<cv::Vec4i> hirearchy;
 		findContours(binary, contours, hirearchy, 
@@ -301,4 +307,57 @@ void ContourMy::contour_demo04_approxi01(void)
 		polylines(image_src, result, true, Scalar(0, 255, 0), 2);
 	}
 	imshow("find contours demo", image_src);
+}
+
+void ContourMy::contour_demo04_fit_circle01(void)
+{
+	const string src_path = "J:/vs2017ws/data/stuff.jpg";
+	Mat image_src = util::read_img(src_path);
+	const string src_win_name = "src窗口";
+	int windows_style = cv::WINDOW_AUTOSIZE | cv::WINDOW_FREERATIO;
+	cv::namedWindow(src_win_name, windows_style);
+	imshow(src_win_name, image_src);
+	//
+	cv::Mat gauss_dst;
+	GaussianBlur(image_src, gauss_dst, cv::Size(3, 3), 10);
+	//获取轮廓
+	Mat gray, binary;
+	cvtColor(gauss_dst, gray, cv::COLOR_BGR2GRAY);
+	/*threshold(gray, binary, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);*/
+	cv::adaptiveThreshold(gray, binary, 255,
+		cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY_INV, 25, 7);
+	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+	cv::erode(binary, binary, kernel, cv::Point(-1, -1), 1);
+	// 轮廓发现
+	imshow("binary", binary);
+	std::vector<std::vector<cv::Point>> contours_src;
+	std::vector<cv::Vec4i> hirearchy;
+	findContours(binary, contours_src, hirearchy, cv::RETR_EXTERNAL,
+		cv::CHAIN_APPROX_SIMPLE, cv::Point());
+	printf("提取轮廓数量：%zu\n", contours_src.size());//提取轮廓数量 0
+	// 拟合圆或者椭圆
+	for (size_t t = 0; t < contours_src.size(); t++) {
+		std::vector<cv::Point> contour_tmp=contours_src[t];
+		double area = cv::contourArea(contour_tmp);
+		double len = cv::arcLength(contour_tmp, true);
+		cout << "area=" << area << " len=" << len << " t=" << t << endl;
+		if (area < 2000 || len < 200|| (area / len)<7)
+		{
+			continue;
+		}
+		drawContours(image_src, contours_src, t, Scalar(0, 0, 255), 2, 8);
+		cv::Point pt = contour_tmp[0];
+		cv::putText(image_src, cv::format("num=%d area=%0.0f len=%0.0f", t, area,len),
+			pt,
+			cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 255));
+		cv::RotatedRect rrt = cv::fitEllipse(contour_tmp);
+		float w = rrt.size.width;
+		float h = rrt.size.height;
+		cv::Point center = rrt.center;
+		cv::circle(image_src, center, 3, Scalar(255, 0, 0), 2, 8, 0);
+		ellipse(image_src, rrt, Scalar(0, 255, 0), 2, 8);
+	}
+	//
+	imshow("fit result", image_src);
+
 }

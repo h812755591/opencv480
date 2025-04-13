@@ -22,7 +22,8 @@ int main(int argc, char * argv[])
 	//cy.contour_demo01_find();
 	//cy.contour_demo02_area();
 	//cy.contour_demo03_match();
-	cy.contour_demo04_approxi01();//多边形逼近
+	//cy.contour_demo04_approxi01();//多边形逼近
+	cy.contour_demo04_fit_circle01();
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 	return 0;
