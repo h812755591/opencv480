@@ -3,7 +3,7 @@
 #include "binary.h"
 #include "connected_component.h" 
 #include "contour.h"
-
+#include "hough.h"
 int main(int argc, char * argv[])
 {
 	//二值化
@@ -18,12 +18,15 @@ int main(int argc, char * argv[])
 	//cc.connected_component_demo01();
 	//cc.connected_component_demo02_stats();
 	//轮廓
-	ContourMy cy;
+	//ContourMy cy;
 	//cy.contour_demo01_find();
 	//cy.contour_demo02_area();
 	//cy.contour_demo03_match();
 	//cy.contour_demo04_approxi01();//多边形逼近
-	cy.contour_demo04_fit_circle01();
+	//cy.contour_demo04_fit_circle01();
+	Hough20::Hough hough;
+	//hough.hough_demo01_hough_lines();
+	hough.hough_demo02_hough_lines();
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 	return 0;

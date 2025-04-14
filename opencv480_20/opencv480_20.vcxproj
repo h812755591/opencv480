@@ -155,6 +155,7 @@
     <ClCompile Include="binary.cpp" />
     <ClCompile Include="connected_component.cpp" />
     <ClCompile Include="contour.cpp" />
+    <ClCompile Include="hough.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="util.cpp" />
   </ItemGroup>

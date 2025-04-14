@@ -30,6 +30,9 @@
     <ClCompile Include="contour.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="hough.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="util.h">
