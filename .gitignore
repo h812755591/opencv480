@@ -273,4 +273,6 @@ x64/
 **/*.vcxproj.filters
 **/*.vcxproj.user
 **/*.vcxproj
-
+**/opencv480_20.vcxproj
+**/opencv480_20.vcxproj.user
+**/opencv480_20.vcxproj.filters
