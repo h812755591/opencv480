@@ -26,7 +26,9 @@ int main(int argc, char * argv[])
 	//cy.contour_demo04_fit_circle01();
 	Hough20::Hough hough;
 	//hough.hough_demo01_hough_lines();
-	hough.hough_demo02_hough_lines();
+	//hough.hough_demo02_hough_lines();
+	//hough.hough_demo03_hough_test();
+	hough.hough_demo04_hough_circle();
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 	return 0;
