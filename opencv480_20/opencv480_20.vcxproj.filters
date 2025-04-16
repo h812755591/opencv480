@@ -33,6 +33,9 @@
     <ClCompile Include="hough.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="morphological_transformations.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="util.h">
@@ -48,6 +51,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="hough.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="morphological_transformations.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

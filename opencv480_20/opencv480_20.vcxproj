@@ -157,6 +157,7 @@
     <ClCompile Include="contour.cpp" />
     <ClCompile Include="hough.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="morphological_transformations.cpp" />
     <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -164,6 +165,7 @@
     <ClInclude Include="connected_component.h" />
     <ClInclude Include="contour.h" />
     <ClInclude Include="hough.h" />
+    <ClInclude Include="morphological_transformations.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

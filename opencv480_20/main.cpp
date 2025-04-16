@@ -4,6 +4,7 @@
 #include "connected_component.h" 
 #include "contour.h"
 #include "hough.h"
+#include "morphological_transformations.h"
 int main(int argc, char * argv[])
 {
 	//二值化
@@ -24,11 +25,21 @@ int main(int argc, char * argv[])
 	//cy.contour_demo03_match();
 	//cy.contour_demo04_approxi01();//多边形逼近
 	//cy.contour_demo04_fit_circle01();
-	Hough20::Hough hough;
+	//Hough20::Hough hough;
 	//hough.hough_demo01_hough_lines();
 	//hough.hough_demo02_hough_lines();
 	//hough.hough_demo03_hough_test();
-	hough.hough_demo04_hough_circle();
+	//hough.hough_demo04_hough_circle();
+	MorphologicalOperation mo;
+	//mo.morphological_demo01_erode();
+	//mo.morphological_demo03_erode();
+	//mo.morphological_demo02_dilate();
+	//mo.morphological_demo04_dilate();
+	//mo.morphological_demo05_open();
+	//mo.morphological_demo06_closed();
+	//mo.morphological_demo07_lines();
+	//mo.morphological_demo09_tophat();
+	mo.morphological_demo10_hitmiss();
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 	return 0;
