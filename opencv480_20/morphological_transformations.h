@@ -13,6 +13,8 @@ public:
 	void morphological_demo08_gradient(void);
 	void morphological_demo09_tophat(void);
 	void morphological_demo10_hitmiss(void);
+	void morphological_demo11_case01(void);
+	void morphological_demo11_case02(void);
 	
 	
 };

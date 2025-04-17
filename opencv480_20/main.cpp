@@ -39,7 +39,9 @@ int main(int argc, char * argv[])
 	//mo.morphological_demo06_closed();
 	//mo.morphological_demo07_lines();
 	//mo.morphological_demo09_tophat();
-	mo.morphological_demo10_hitmiss();
+	//mo.morphological_demo10_hitmiss();
+	mo.morphological_demo11_case01();
+	//mo.morphological_demo11_case02();
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 	return 0;
