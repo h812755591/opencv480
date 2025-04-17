@@ -5,6 +5,7 @@
 #include "contour.h"
 #include "hough.h"
 #include "morphological_transformations.h"
+#include "video_my.h"
 int main(int argc, char * argv[])
 {
 	//二值化
@@ -30,7 +31,7 @@ int main(int argc, char * argv[])
 	//hough.hough_demo02_hough_lines();
 	//hough.hough_demo03_hough_test();
 	//hough.hough_demo04_hough_circle();
-	MorphologicalOperation mo;
+	//MorphologicalOperation mo;
 	//mo.morphological_demo01_erode();
 	//mo.morphological_demo03_erode();
 	//mo.morphological_demo02_dilate();
@@ -40,10 +41,11 @@ int main(int argc, char * argv[])
 	//mo.morphological_demo07_lines();
 	//mo.morphological_demo09_tophat();
 	//mo.morphological_demo10_hitmiss();
-	mo.morphological_demo11_case01();
+	//mo.morphological_demo11_case01();
 	//mo.morphological_demo11_case02();
-	cv::waitKey(0);
-	cv::destroyAllWindows();
+	MyVideo mv;
+	//mv.video_demo01_rw();
+	mv.video_demo02_rw_file();
 	return 0;
 }
 

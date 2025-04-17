@@ -36,6 +36,9 @@
     <ClCompile Include="morphological_transformations.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="video_my.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="util.h">
@@ -54,6 +57,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="morphological_transformations.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="video_my.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

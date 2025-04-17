@@ -159,6 +159,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="morphological_transformations.cpp" />
     <ClCompile Include="util.cpp" />
+    <ClCompile Include="video_my.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="binary.h" />
@@ -167,6 +168,7 @@
     <ClInclude Include="hough.h" />
     <ClInclude Include="morphological_transformations.h" />
     <ClInclude Include="util.h" />
+    <ClInclude Include="video_my.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
