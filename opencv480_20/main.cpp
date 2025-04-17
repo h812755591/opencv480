@@ -45,7 +45,10 @@ int main(int argc, char * argv[])
 	//mo.morphological_demo11_case02();
 	MyVideo mv;
 	//mv.video_demo01_rw();
-	mv.video_demo02_rw_file();
+	//mv.video_demo02_rw_file();
+	//mv.video_demo03_rw_url();
+	//mv.video_demo03_color_space();
+	mv.video_demo04_hsv();
 	return 0;
 }
 
