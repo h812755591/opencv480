@@ -155,6 +155,7 @@
     <ClCompile Include="binary.cpp" />
     <ClCompile Include="connected_component.cpp" />
     <ClCompile Include="contour.cpp" />
+    <ClCompile Include="corner_dect.cpp" />
     <ClCompile Include="hough.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="morphological_transformations.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="binary.h" />
     <ClInclude Include="connected_component.h" />
     <ClInclude Include="contour.h" />
+    <ClInclude Include="corner_dect.h" />
     <ClInclude Include="hough.h" />
     <ClInclude Include="morphological_transformations.h" />
     <ClInclude Include="util.h" />

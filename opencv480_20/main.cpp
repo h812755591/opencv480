@@ -6,6 +6,7 @@
 #include "hough.h"
 #include "morphological_transformations.h"
 #include "video_my.h"
+#include "corner_dect.h"
 int main(int argc, char * argv[])
 {
 	//二值化
@@ -48,7 +49,12 @@ int main(int argc, char * argv[])
 	//mv.video_demo02_rw_file();
 	//mv.video_demo03_rw_url();
 	//mv.video_demo03_color_space();
-	mv.video_demo04_hsv();
+	//mv.video_demo04_hsv();
+	//mv.video_demo04_hand();
+	mv.video_demo06_obj_tracer_based_color();
+	//CornerDect cornerDect;
+	//cornerDect.demo01_harris();
+	//cornerDect.demo01_thomas();
 	return 0;
 }
 
