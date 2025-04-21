@@ -350,7 +350,40 @@ namespace
 		}
 		
 	}
+	void process_frame_back_ground(Mat &image,
+		cv::Ptr<cv::BackgroundSubtractorMOG2> &ptr)
+	{
+		Mat mask;
+		ptr->apply(image, mask);
 
+		Mat se = getStructuringElement(cv::MORPH_RECT, Size(1, 5), 
+			Point(-1, -1));
+		morphologyEx(mask, mask, cv::MORPH_OPEN, se);
+		imshow("mask", mask);
+		// 形态学操作
+		vector<vector<Point>> contours;
+		vector<cv::Vec4i> hirearchy;
+		findContours(mask, contours, hirearchy, cv::RETR_EXTERNAL, 
+			cv::CHAIN_APPROX_SIMPLE, Point());
+		for (size_t t = 0; t < contours.size(); t++) {
+			double area = contourArea(contours[t]);
+			if (area < 100) {
+				continue;
+			}
+			cv::Rect box = boundingRect(contours[t]);
+			cv::RotatedRect rrt = minAreaRect(contours[t]);
+			// rectangle(image, box, Scalar(0, 0, 255), 2, 8, 0);
+			circle(image, rrt.center, 2, Scalar(255, 0, 0), 2, 8, 0);
+			ellipse(image, rrt, Scalar(0, 0, 255), 2, 8);
+		}
+	}
+	void test(void)
+	{
+		cv::Ptr<cv::BackgroundSubtractorMOG2> pMOG2 =
+			cv::createBackgroundSubtractorMOG2(500, 16, false);
+		cout<<"VarInit="<<pMOG2->getVarInit() <<endl;//VarInit=15
+		
+	}
 }
 void MyVideo::video_demo06_obj_tracer_based_color(void)
 {
@@ -380,6 +413,47 @@ void MyVideo::video_demo06_obj_tracer_based_color(void)
 		
 		int delay = static_cast<int>(1000 / fps);
 		int key = cv::waitKey(delay);
+		if (key != -1)
+		{
+			if ((key & 0xFF) == 'q') break;
+		}
+	}
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+	capture.release();
+}
+
+void MyVideo::video_demo07_background(void)
+{
+	test();
+	VideoCapture capture;
+	string file_name = "J:/vs2017ws/data/vtest.avi";             // 0 = open default camera
+	int apiID = cv::CAP_ANY;      // 0 = autodetect default API
+	capture.open(file_name, apiID);
+	if (!capture.isOpened()) {
+		std::cerr << "ERROR! Unable to open camera\n";
+		return;
+	}
+	int windows_style = cv::WINDOW_AUTOSIZE | cv::WINDOW_FREERATIO;
+	string video_win_name = "framewin";
+	namedWindow(video_win_name, windows_style);
+	//
+	double fps = capture.get(cv::CAP_PROP_FPS);
+	Mat frame;
+	string do_frame_winow = "do_frame_winow";
+	namedWindow(do_frame_winow, windows_style);
+	cv::Ptr<cv::BackgroundSubtractorMOG2> pMOG2 = 
+		cv::createBackgroundSubtractorMOG2(500, 100, false);
+	while (true)
+	{
+		bool result = capture.read(frame);
+		if (!result) break;
+		cv::imshow(video_win_name, frame);
+		process_frame_back_ground(frame, pMOG2);
+		imshow(do_frame_winow, frame);
+
+		int delay = static_cast<int>(1000 / fps);
+		int key = cv::waitKey(delay/2);
 		if (key != -1)
 		{
 			if ((key & 0xFF) == 'q') break;

@@ -12,4 +12,6 @@ public:
 	void video_demo04_hand(void);
 	void video_demo05_hand1(void);
 	void video_demo06_obj_tracer_based_color(void);
+	void video_demo07_background(void);
+
 };

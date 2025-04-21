@@ -51,7 +51,8 @@ int main(int argc, char * argv[])
 	//mv.video_demo03_color_space();
 	//mv.video_demo04_hsv();
 	//mv.video_demo04_hand();
-	mv.video_demo06_obj_tracer_based_color();
+	//mv.video_demo06_obj_tracer_based_color();
+	mv.video_demo07_background();
 	//CornerDect cornerDect;
 	//cornerDect.demo01_harris();
 	//cornerDect.demo01_thomas();
