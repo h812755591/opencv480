@@ -384,6 +384,20 @@ namespace
 		cout<<"VarInit="<<pMOG2->getVarInit() <<endl;//VarInit=15
 		
 	}
+	void draw_lines(Mat &frame, vector<cv::Point2f> pts1, 
+		vector<cv::Point2f> pts2, cv::RNG &rng)
+	{
+		vector<Scalar> lut;
+		for (size_t t = 0; t < pts1.size(); t++) {
+			int b = rng.uniform(0, 255);
+			int g = rng.uniform(0, 255);
+			int r = rng.uniform(0, 255);
+			lut.push_back(Scalar(b, g, r));
+		}
+		for (size_t t = 0; t < pts1.size(); t++) {
+			line(frame, pts1[t], pts2[t], lut[t], 2, 8, 0);
+		}
+	}
 }
 void MyVideo::video_demo06_obj_tracer_based_color(void)
 {
@@ -425,7 +439,7 @@ void MyVideo::video_demo06_obj_tracer_based_color(void)
 
 void MyVideo::video_demo07_background(void)
 {
-	test();
+	
 	VideoCapture capture;
 	string file_name = "J:/vs2017ws/data/vtest.avi";             // 0 = open default camera
 	int apiID = cv::CAP_ANY;      // 0 = autodetect default API
@@ -457,6 +471,94 @@ void MyVideo::video_demo07_background(void)
 		if (key != -1)
 		{
 			if ((key & 0xFF) == 'q') break;
+		}
+	}
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+	capture.release();
+}
+
+void MyVideo::video_demo08_objecttrack_KLT(void)
+{
+	VideoCapture capture;
+	string file_name = "J:/vs2017ws/data/bike.avi";             // 0 = open default camera
+	int apiID = cv::CAP_ANY;      // 0 = autodetect default API
+	capture.open(file_name, apiID);
+	if (!capture.isOpened()) {
+		std::cerr << "ERROR! Unable to open camera\n";
+		return;
+	}
+	//
+	double fps = capture.get(cv::CAP_PROP_FPS);
+	//
+	cv::RNG rng(12345);
+	namedWindow("frame", cv::WINDOW_AUTOSIZE);
+	Mat old_frame, old_gray;
+	capture.read(old_frame);
+	cvtColor(old_frame, old_gray, cv::COLOR_BGR2GRAY);
+	vector<cv::Point2f> feature_pts;
+	vector<cv::Point2f> initPoints;
+	double quality_level = 0.01;
+	int minDistance = 20;
+	goodFeaturesToTrack(old_gray, feature_pts, 5000, quality_level, minDistance, 
+		Mat(), 3, false);
+	Mat frame, gray;
+	vector<cv::Point2f> pts[2];
+	pts[0].insert(pts[0].end(), feature_pts.begin(), feature_pts.end());
+	initPoints.insert(initPoints.end(), feature_pts.begin(), feature_pts.end());
+	vector<uchar> status;
+	vector<float> err;
+	cv::TermCriteria criteria = cv::TermCriteria(cv::TermCriteria::COUNT + 
+		cv::TermCriteria::EPS, 30, 0.01);
+
+	while (true) {
+		bool ret = capture.read(frame);
+		if (!ret) break;
+		imshow("frame", frame);
+		cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+
+		// calculate optical flow
+		calcOpticalFlowPyrLK(old_gray, gray, pts[0], pts[1], status, err, Size(31, 31), 3, criteria, 0);
+		size_t i = 0, k = 0;
+		for (i = 0; i < pts[1].size(); i++) {
+			double dist = abs(pts[0][i].x - pts[1][i].x) + abs(pts[0][i].y - pts[1][i].y);
+			if (status[i] && dist > 2) {
+				pts[0][k] = pts[0][i];
+				initPoints[k] = initPoints[i];
+				pts[1][k++] = pts[1][i];
+				int b = rng.uniform(0, 255);
+				int g = rng.uniform(0, 255);
+				int r = rng.uniform(0, 255);
+				circle(frame, pts[1][i], 2, Scalar(b, g, r), 2, 8, 0);
+			}
+		}
+
+		// update key points
+		pts[0].resize(k);
+		pts[1].resize(k);
+		initPoints.resize(k);
+
+		
+		draw_lines(frame, initPoints, pts[1], rng);
+
+	
+		imshow("KLT-demo", frame);
+		int delay = static_cast<int>(1000 / fps);
+		int key = cv::waitKey(delay);
+		if (key != -1)
+		{
+			if ((key & 0xFF) == 'q') break;
+		}
+
+		// update to old
+		std::swap(pts[1], pts[0]);
+		cv::swap(old_gray, gray);
+
+		// re-init
+		if (pts[0].size() < 40) {
+			goodFeaturesToTrack(old_gray, feature_pts, 5000, quality_level, minDistance, Mat(), 3, false);
+			pts[0].insert(pts[0].end(), feature_pts.begin(), feature_pts.end());
+			initPoints.insert(initPoints.end(), feature_pts.begin(), feature_pts.end());
 		}
 	}
 	cv::waitKey(0);
