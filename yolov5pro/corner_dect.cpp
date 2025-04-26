@@ -264,3 +264,43 @@ void yolov5pro::CornerDect::demo06_findHomography(void)
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 }
+
+void yolov5pro::CornerDect::demo07_findHomography(void)
+{
+	Mat ref_img = cv::imread("J:/vs2017ws/data/form.png");
+	Mat img = cv::imread("J:/vs2017ws/data/form_in_doc.jpg");
+	imshow("表单模板", ref_img);
+	auto orb = cv::ORB::create(500);
+	vector<cv::KeyPoint> kypts_ref;
+	vector<cv::KeyPoint> kypts_img;
+	Mat desc_book, desc_book_on_desk;
+	orb->detectAndCompute(ref_img, Mat(), kypts_ref, desc_book);
+	orb->detectAndCompute(img, Mat(), kypts_img, desc_book_on_desk);
+	Mat result;
+	auto bf_matcher = cv::BFMatcher::create(cv::NORM_HAMMING, false);
+	vector<cv::DMatch> matches;
+	bf_matcher->match(desc_book_on_desk, desc_book, matches);
+	float good_rate = 0.15f;
+	int num_good_matches = matches.size() * good_rate;
+	std::cout << num_good_matches << std::endl;
+	std::sort(matches.begin(), matches.end());
+	matches.erase(matches.begin() + num_good_matches, matches.end());
+	cv::drawMatches(ref_img, kypts_ref, img, kypts_img, matches, result);
+	imshow("匹配", result);
+	imwrite("J:/vs2017ws/data/result_doc.png", result);
+
+	// Extract location of good matches
+	std::vector<Point2f> points1, points2;
+	for (size_t i = 0; i < matches.size(); i++)
+	{
+		points1.push_back(kypts_img[matches[i].queryIdx].pt);
+		points2.push_back(kypts_ref[matches[i].trainIdx].pt);
+	}
+	Mat h = findHomography(points1, points2, cv::RANSAC);
+	Mat aligned_doc;
+	warpPerspective(img, aligned_doc, h, ref_img.size());
+	imwrite("J:/vs2017ws/data/aligned_doc.png", aligned_doc);
+	//释放资源
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+}
