@@ -9,6 +9,6 @@ namespace yolov5pro
 		void demo03_SIFT(void);
 		void demo04_ORB_desc(void);
 		void demo05_findHomography(void);
-
+		void demo06_findHomography(void);
 	};
 }

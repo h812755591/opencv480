@@ -206,3 +206,61 @@ void yolov5pro::CornerDect::demo05_findHomography(void)
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 }
+
+void yolov5pro::CornerDect::demo06_findHomography(void)
+{
+	const string book_path = "J:/vs2017ws/data/book.jpg";
+	const string book_on_desk_path = "J:/vs2017ws/data/book_on_desk.jpg";
+	Mat book = util::read_img(book_path);
+	Mat book_on_desk = util::read_img(book_on_desk_path);
+	string in_win_name = "输入窗口";
+	/*int windows_style = cv::WINDOW_AUTOSIZE | cv::WINDOW_FREERATIO;
+	cv::namedWindow(in_win_name, windows_style);*/
+	//imshow("book", book);
+	//imshow("book_on_desk", book_on_desk);
+	//1,创建检测算法
+	cv::Ptr<cv::ORB> orb=cv::ORB::create(500);
+	vector<cv::KeyPoint> kypts_book;
+	vector<cv::KeyPoint> kypts_book_on_desk;
+	Mat desc_book, desc_book_on_desk;
+	orb->detectAndCompute(book, Mat(), kypts_book, desc_book);
+	orb->detectAndCompute(book_on_desk, Mat(), kypts_book_on_desk, desc_book_on_desk);
+	//2,
+	Mat result;
+	auto bf_matcher = cv::BFMatcher::create(cv::NORM_HAMMING, false);
+	vector<cv::DMatch> matches;
+	bf_matcher->match(desc_book, desc_book_on_desk, matches);
+	//3,
+	float good_rate = 0.15f;
+	int num_good_matches = matches.size() * good_rate;
+	std::cout << num_good_matches << std::endl;
+	std::sort(matches.begin(), matches.end());
+	matches.erase(matches.begin() + num_good_matches, matches.end());
+	drawMatches(book, kypts_book, book_on_desk, kypts_book_on_desk, matches, result);
+	vector<Point2f> obj_pts;
+	vector<Point2f> scene_pts;
+	//
+	for (size_t t = 0; t < matches.size(); t++) {
+		obj_pts.push_back(kypts_book[matches[t].queryIdx].pt);
+		scene_pts.push_back(kypts_book_on_desk[matches[t].trainIdx].pt);
+	}
+	Mat h = findHomography(obj_pts, scene_pts, cv::RANSAC);
+	vector<Point2f> srcPts;
+	srcPts.push_back(Point2f(0, 0));
+	srcPts.push_back(Point2f(book.cols, 0));
+	srcPts.push_back(Point2f(book.cols, book.rows));
+	srcPts.push_back(Point2f(0, book.rows));
+	//
+	std::vector<Point2f> dstPts(4);
+	perspectiveTransform(srcPts, dstPts, h);
+
+	for (int i = 0; i < 4; i++) {
+		line(book_on_desk, dstPts[i], dstPts[(i + 1) % 4], Scalar(0, 0, 255), 2, 8, 0);
+	}
+	imshow("暴力匹配", result);
+	namedWindow("对象检测", cv::WINDOW_FREERATIO);
+	imshow("对象检测", book_on_desk);
+	//释放资源
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+}
