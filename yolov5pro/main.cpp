@@ -10,6 +10,7 @@ int main(int argc,char * argv[])
 	//cd.demo03_SIFT();
 	//cd.demo05_findHomography();
 	//cd.demo06_findHomography();
-	cd.demo07_findHomography();
+	//cd.demo07_findHomography();
+	cd.demo08_findHomography();
 	return 0;
 }

@@ -11,5 +11,6 @@ namespace yolov5pro
 		void demo05_findHomography(void);
 		void demo06_findHomography(void);
 		void demo07_findHomography(void);
+		void demo08_findHomography(void);
 	};
 }
