@@ -94,7 +94,7 @@ void image_gradient::demo03_laplacian(void)
 	cv::GaussianBlur(gray, gray, cv::Size(3, 3), 0);
 	//
 	cv::Mat laplacian, abs_laplacian;
-	cv::Laplacian(gray, laplacian, CV_16S, 1);  // ksize=3
+	cv::Laplacian(gray, laplacian, CV_16S, 3);  // ksize=3
 	cv::convertScaleAbs(laplacian, abs_laplacian);  // 转为8位无符号
 
 	//
@@ -103,4 +103,8 @@ void image_gradient::demo03_laplacian(void)
 	//释放资源
 	cv::waitKey();
 	cv::destroyAllWindows();
+}
+
+void image_gradient::demo04_canny(void)
+{
 }
