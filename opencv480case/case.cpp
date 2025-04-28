@@ -24,10 +24,77 @@ namespace
 		
 		std::sort(rects.begin(), rects.end(), compareRectY);
 	}
-	void dect_defect(Mat &tpl ,vector<cv::Rect> &rects, vector<cv::Rect> &defects)
+	void dect_defect(Mat &tpl ,vector<cv::Rect> &rects,Mat &binary1, vector<cv::Rect> &defects)
 	{
+		int height = tpl.rows;
+		int width = tpl.cols;
+		size_t size = rects.size();
+		for(size_t ihhh=0; ihhh <size; ihhh++)
+		{
+			Mat roi=binary1(rects[ihhh]);
+			
+			cv::resize(roi,roi,tpl.size());//因为模板的长宽和模板有一些轻微差距
+			Mat mask;
+			cv::subtract(tpl,roi,mask);
+			Mat kernal = cv::getStructuringElement(cv::MORPH_RECT,
+				cv::Size(3,3));
+			cv::morphologyEx(mask,mask,cv::MORPH_OPEN,kernal);
+			//转化为二值图
+			cv::threshold(mask,mask,0,255,cv::THRESH_BINARY);
+			//
+			int count = cv::countNonZero(mask);
+			//轮廓分析
+			int mh = mask.rows + 2;
+			int mw = mask.cols + 2;
+			Mat mask1 = Mat::zeros(Size(mw,mh),mask.type());
+			cv::Rect mroi;
+			mroi.x = 1;
+			mroi.y = 1;
+			mroi.height = mask.rows;
+			mroi.width = mask.cols;
+			mask.copyTo(mask1(mroi));
+			//
+			vector<vector<Point>> contours11;
+			cv::findContours(mask1, contours11, cv::RETR_LIST,
+				cv::CHAIN_APPROX_SIMPLE);
+			bool find_flag = false;
+			for (size_t m=0;m< contours11.size();m++)
+			{
 
-		
+				vector<Point> cc= contours11[m];
+				cv::Rect rt = cv::boundingRect(cc);
+				//长宽比
+				double ratio = ((double)rt.width) / ((double)rt.height);
+				
+				double area1 = cv::contourArea(cc);
+				
+				/*mask = 0 ratio = 0.8 edget = 44 edgeb = 2
+					mask = 0 area1 = 56*/
+				if ((ratio > 4.0)&&(rt.y < 5 ||((mask1.rows - (rt.y + rt.height)) < 10)))
+				{
+					continue;
+				}
+				
+				//再根据面积过滤一下
+				
+				if (area1>10)
+				{
+					cout << "mask=" << ihhh << " ratio=" << ratio << " rt.y=" << rt.y << " hh="
+						<< mask1.rows - rt.y - rt.height << endl;
+					cout << "mask=" << ihhh << " area1=" << area1 << endl;
+					find_flag = true;
+				}
+			}
+
+			if (count > 50&&find_flag)
+			{
+				cout << "count:: " << count << endl;
+				defects.push_back(rects[ihhh]);
+			}
+			cv::imshow("mask", mask);
+			cv::waitKey(0);
+			
+		}
 	}
 }
 
@@ -48,13 +115,13 @@ void case1::demo01(void)
 	// 灰度图
 	Mat gray;
 	cv::cvtColor(image,gray,cv::COLOR_BGR2GRAY);
-	GaussianBlur(gray, gray, cv::Size(3, 3), 0);
+	//GaussianBlur(gray, gray, cv::Size(3, 3), 0);
 	//cv::imshow("gray", gray);
 	//二值化
 	Mat binary;
 	cv::threshold(gray,binary,0,255,
 		cv::THRESH_BINARY_INV|cv::THRESH_OTSU);
-	//cv::imshow("binary", binary);
+	cv::imshow("binary", binary);
 	//缺少角 或者有划痕 视为次品 有些轻微划痕 不关心
 	//去掉轻微划痕
 	Mat binary1;
@@ -66,7 +133,7 @@ void case1::demo01(void)
 	/*cv::findContours(binary1, contours, cv::RETR_LIST,
 		cv::CHAIN_APPROX_SIMPLE, Point(0, 0));*/
 	cv::findContours(binary1, contours, cv::RETR_LIST,
-		cv::CHAIN_APPROX_NONE, Point(0, 0));
+		cv::CHAIN_APPROX_SIMPLE, Point(0, 0));
 	//for (size_t i = 0; i < contours.size(); i++)
 	//{
 	//	cv::drawContours(image, contours, static_cast<int>(i),
@@ -99,7 +166,7 @@ void case1::demo01(void)
 		}
 		rects.push_back(rect);
 		//cv::rectangle(image, rect, cv::Scalar(0, 255, 0), 1);  // 绘制绿色矩形，线宽2像素
-		cv::drawContours(image, contours, static_cast<int>(i), Scalar(0, 255, 0));
+		//cv::drawContours(image, contours, static_cast<int>(i), Scalar(0, 255, 0));
 	}
 	// 要对外接矩形进行排序
 	sort_rect(rects);
@@ -108,17 +175,22 @@ void case1::demo01(void)
 	//提取ROI 区域作为模板? but why?todowhat
 	Mat tpl=binary1(rects[1]);
 	//cv::imshow("roi", tpl);
-	for(size_t i=0;i<rects.size();i++)
+	/*for(size_t i=0;i<rects.size();i++)
 	{
 		cv::putText(image, std::to_string(i), rects[i].tl(),
 		cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0));
+	}*/
+	//
+	vector<cv::Rect> defects;
+	dect_defect(tpl,rects,binary1, defects);
+	for (size_t i=0;i<defects.size();i++)
+	{
+		cv::rectangle(image,defects[i],Scalar(0,0,255));
+		cv::putText(image, cv::format("bad"), defects[i].tl(),
+		cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0,255, 0));
 	}
 	//
-
-
-	cout << endl;
-	cv::imshow("cc", image);
-	//
+	cv::imshow("result", image);
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 
