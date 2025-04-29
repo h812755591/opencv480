@@ -13,7 +13,8 @@ using cv::Size;
 using cv::Point;
 using cv::Scalar;
 string base_path("J:/vs2017ws/data/");
-
+string positive_dir("J:/vs2017ws/data/elec_watch/positive");
+string negative_dir("J:/vs2017ws/data/elec_watch/negative");
 namespace 
 {
 	bool compareRectY(cv::Rect a, cv::Rect b) {
@@ -100,7 +101,9 @@ namespace
 
 void case1::demo01(void)
 {
+	//string image_path = base_path + "ce_02.jpg";
 	string image_path = base_path + "ce_01.jpg";
+
 	Mat image=cv::imread(image_path);
 	if (image.empty())
 	{
@@ -197,4 +200,152 @@ void case1::demo01(void)
 
 
 
+}
+namespace fordemo02
+{
+	void get_hog_descriptor(Mat &image,vector<float> &desc)
+	{
+		cv::HOGDescriptor hogdesc;
+		int h = image.rows;
+		int w = image.cols;
+		//转64*128 图像 宽64 长128
+		Mat img;
+		double ration = 64.0 / w;
+		cv::resize(image,img,Size(64,static_cast<int>(ration*h)));
+		Mat gray;
+		cv::cvtColor(img,gray,cv::COLOR_BGR2GRAY);
+		Mat result = Mat::zeros(Size(64,128),CV_8UC1);
+		result.setTo(Scalar(127));//
+		//
+		cv::Rect roi;
+		roi.x = 0;
+		roi.width = 64;
+		roi.y = (128 -gray.rows)/2 ;
+		roi.height = gray.rows;
+
+		gray.copyTo(result(roi));
+		//
+		hogdesc.compute(result,desc,Size(8,8),Size(0,0));
+
+		//hog 宽高必须能被2整除
+		printf("desc len=%u\n", static_cast<unsigned int>(desc.size()));
+	}
+	void generate_dataset(Mat &train_data, Mat &labels)
+	{
+		vector<string> p_images;
+		cv::glob(positive_dir, p_images);
+		int nums = static_cast<int>(p_images.size());
+		for (int i = 0;i<nums;i++) 
+		{
+			Mat image = cv::imread(p_images[i]);
+			vector<float> fv;
+			get_hog_descriptor(image,fv);
+			for (int j = 0; j < static_cast<int>(fv.size()); j++)
+			{
+				train_data.at<float>(i, j) = fv[j];
+				//cout << fv[j] << endl;
+			}
+			labels.at<int>(i,0)= 1;
+		}
+		vector<string> n_images;
+		cv::glob(negative_dir, n_images);
+		int n_nums = static_cast<int>(n_images.size());
+		for (int i = 0; i < n_nums; i++)
+		{
+			Mat n_image = cv::imread(n_images[i]);
+			vector<float> fv;
+			get_hog_descriptor(n_image, fv);
+			for (int j = 0; j < static_cast<int>(fv.size()); j++)
+			{
+				train_data.at<float>(i+ nums, j) = fv[j];
+			}
+			labels.at<int>(i+ nums, 0) = -1;
+		}
+
+	}
+	void svm_train(Mat &train_data, Mat &labels)
+	{
+		
+		cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
+		svm->setC(2.67);
+		svm->setType(cv::ml::SVM::C_SVC);
+		svm->setKernel(cv::ml::SVM::LINEAR);
+		svm->setGamma(5.383);
+		svm->train(train_data, cv::ml::ROW_SAMPLE, labels);
+		//
+		svm->save(base_path+"hog_elec.xml");
+	}
+	void test(void)
+	{
+		Mat result = Mat::zeros(Size(640, 1280), CV_8UC1);
+		cv::imshow("result",result);
+		//result = Scalar(127);//
+		result.setTo(Scalar(127));//
+		cv::imshow("test",result);
+		cv::waitKey(0);
+		cv::destroyAllWindows();
+	}
+}
+void case2::demo02(void)
+{
+	//
+	//Mat train_data = Mat::zeros(Size(3780,26),CV_32FC1);
+	//Mat labels= Mat::zeros(Size(1, 26), CV_32SC1);
+	//fordemo02::generate_dataset(train_data, labels);
+	
+	//fordemo02::svm_train(train_data,labels);
+	//
+	cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::load(base_path+ "hog_elec.xml");
+	//
+	Mat test = cv::imread("J:/vs2017ws/data/elec_watch/test/scene_01.jpg");
+	cv::resize(test,test,Size(0,0),0.2,0.2);
+	//
+	cv::Rect rect;
+	rect.width = 64;
+	rect.height = 128;
+	int sum_x = 0;
+	int sum_y = 0;
+	int count = 0;
+	//
+	for (int row=64;row<test.rows-64;row+=4) 
+	{
+		for (int col=32;col<test.cols-32;col+=4)
+		{
+			rect.x = col - 32;
+			rect.y = row - 64;
+			vector<float> fv;
+			Mat roi=test(rect);
+			fordemo02::get_hog_descriptor(roi,fv);
+			Mat one_row = Mat::zeros(Size(fv.size(),1),CV_32FC1);
+			for (int i=0;i<static_cast<int>(fv.size());i++)
+			{
+				one_row.at<float>(0, i) = fv[i];
+			}
+			float fflag = svm->predict(one_row);
+			if (fflag>0)
+			{
+				//cv::rectangle(test,rect,Scalar(0,0,255),1);
+				count++;
+				sum_x += rect.x;
+				sum_y += rect.y;
+			}
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+	//
+	rect.x = sum_x / count;
+	rect.y = sum_y / count;
+	cv::rectangle(test, rect, Scalar(0, 255, 0), 1);
+	cv::imshow("src",test);
+	cv::waitKey(0);
+	cv::destroyAllWindows();
 }

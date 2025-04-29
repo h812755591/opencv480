@@ -7,5 +7,8 @@ namespace case1
 
 namespace case2
 {
-
+	/*
+	自定义对象检测
+	*/
+	void demo02(void);
 };
