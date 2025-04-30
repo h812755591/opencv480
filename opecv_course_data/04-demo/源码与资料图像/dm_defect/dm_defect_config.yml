@@ -1,0 +1,7 @@
+%YAML:1.0
+---
+line_length: 85
+support_decode: 0
+aspect_rate: 7.5000000000000000e-01
+min_area: 7500.
+threshod_angle: 5.

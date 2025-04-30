@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 #include "case03.h"
-
+#include "omp.h"
 using std::cout;
 using std::endl;
 using std::string;
