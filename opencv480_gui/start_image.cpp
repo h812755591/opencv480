@@ -1,4 +1,7 @@
 #include <opencv2/opencv.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/highgui.hpp>
 #include <string>
 #include "start_image.h"
 using std::string;
@@ -46,7 +49,7 @@ void start_image::show(void)
 		std::vector<int> compression_params;
 		compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
 		compression_params.push_back(100);
-		imwrite("starry_night.jpg", img);
+		imwrite("starry_night.jpg", img, compression_params);
 	}
 	cv::destroyAllWindows();
 }
