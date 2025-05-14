@@ -41,7 +41,7 @@ void start_video::demo01(void)
 	//cout << capture.getBackendName() << endl;
 	Mat frame;
 	// 
-	int windows_style = cv::WINDOW_NORMAL | cv::WINDOW_FREERATIO;
+	int windows_style = cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO;
 	string video_win_name = "framewin";
 	namedWindow(video_win_name, windows_style);
 	for (;;)
@@ -51,7 +51,7 @@ void start_video::demo01(void)
 		{
 			break;
 		}
-		cv::resize(frame,frame,cv::Size(1920,1200));
+		//cv::resize(frame,frame,cv::Size(1920,1200));
 		cv::imshow(video_win_name, frame);
 		/*
 		cv::waitKey() 是 ​唯一负责更新图像窗口内容​ 的函数。

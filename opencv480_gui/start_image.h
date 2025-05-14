@@ -4,6 +4,7 @@
 namespace start_image
 {
 	void show(void);
+	void write(void);
 
 }
 

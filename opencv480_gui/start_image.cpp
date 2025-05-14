@@ -53,3 +53,8 @@ void start_image::show(void)
 	}
 	cv::destroyAllWindows();
 }
+
+void start_image::write(void)
+{
+
+}
