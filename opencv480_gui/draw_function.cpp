@@ -41,9 +41,7 @@ void draw_func::demo01_circle(void)
 	imshow("Display window", img);
 
 	int k = waitKey(0);// 超时返回-1  
-	if ((k & 0xFF) == 's')
-	{
-		exit(1);
-	}
 	cv::destroyAllWindows();
+	
+	
 }
