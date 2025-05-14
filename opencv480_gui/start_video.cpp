@@ -28,11 +28,17 @@ void start_video::demo01(void)
 	
 	*/
 	cv::VideoCapture capture=cv::VideoCapture(0, cv::CAP_ANY);
+
 	if (!capture.isOpened()) {
 		printf("Cannot open camera\n");
 		exit(1);
 	}
-	cout << capture.getBackendName() << endl;
+	capture.set(cv::CAP_PROP_FRAME_WIDTH,1920);
+	capture.set(cv::CAP_PROP_FRAME_HEIGHT, 1200);
+	double actual_w = capture.get(cv::CAP_PROP_FRAME_WIDTH);
+	double actual_h = capture.get(cv::CAP_PROP_FRAME_HEIGHT);
+	std::cout << "实际分辨率: " << actual_w << "x" << actual_h << std::endl;
+	//cout << capture.getBackendName() << endl;
 	Mat frame;
 	// 
 	int windows_style = cv::WINDOW_NORMAL | cv::WINDOW_FREERATIO;
@@ -45,6 +51,7 @@ void start_video::demo01(void)
 		{
 			break;
 		}
+		cv::resize(frame,frame,cv::Size(1920,1200));
 		cv::imshow(video_win_name, frame);
 		/*
 		cv::waitKey() 是 ​唯一负责更新图像窗口内容​ 的函数。
@@ -59,7 +66,7 @@ void start_video::demo01(void)
 		*/
 		double fps = capture.get(cv::CAP_PROP_FPS);
 		int delay = (fps > 0) ? static_cast<int>(1000 / fps) : 25;  // 默认30ms
-		cout << "delay="<<delay << endl;
+		//cout << "delay="<<delay << endl;
 		//int key = cv::waitKey(1);  // 快速响应按键和刷新
 
 		int key = cv::waitKey(delay);//cv::waitKey 是必须调用的可以刷新视频 // 快速响应按键和刷新
@@ -104,5 +111,10 @@ std::thread process_thread([&]() {
 	}
 });
 
+
+*/
+/*
+cap.set(propId, value).
+cap.get(propId) 可以设置窗口大小等属性
 
 */
