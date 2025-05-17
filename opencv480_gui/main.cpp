@@ -3,10 +3,12 @@
 #include "start_image.h"
 #include "start_video.h"
 #include "draw_function.h"
+#include "core_operation.h"
 int main()
 {
 	/*start_image::show();*/
 	//start_video::demo01();
-	draw_func::demo01_circle();
+	//draw_func::demo01_circle();
+	basic_operation::demo01_access_modify();
 	return 1;
 }
