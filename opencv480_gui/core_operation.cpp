@@ -31,3 +31,25 @@ void basic_operation::demo01_access_modify(void)
 
 }
 
+void basic_operation::demo02_split_merge(void)
+{
+	Mat img=imread(base_path+"doc_data/"+"home.jpg",cv::IMREAD_COLOR);
+	if (img.empty())
+	{
+		cout << " load error";
+		return;
+	}
+	std::vector<cv::Mat> channels; // B G R
+	
+	cv::split(img, channels);
+	cv::Mat b = channels[0];  // 蓝色通道
+	cv::Mat g = channels[1];  // 绿色通道
+	cv::Mat r = channels[2];  // 红色通道
+	cv::Mat merged_img;
+	cv::merge(channels, merged_img);
+	imshow("asasd", merged_img);
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+
+}
+

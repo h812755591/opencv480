@@ -4,6 +4,7 @@
 namespace basic_operation
 {
 	void demo01_access_modify(void);
+	void demo02_split_merge(void);
 }
 namespace arithmetic_operation
 {
