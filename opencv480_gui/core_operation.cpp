@@ -84,5 +84,8 @@ void basic_operation::demo03_boarder(void)
 	imshow("asasd", img);
 	cv::waitKey(0);
 	cv::destroyAllWindows();
+	// res = cv.warpAffine(img, M, (cols, rows), borderMode=cv.BORDER_ISOLATED)
+	// 
+
 }
 
