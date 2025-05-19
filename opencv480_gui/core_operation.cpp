@@ -53,3 +53,36 @@ void basic_operation::demo02_split_merge(void)
 
 }
 
+void basic_operation::demo03_boarder(void)
+{
+	Mat img = imread(base_path + "doc_data/" + "opencv-logo.png");
+	if (img.empty())
+	{
+		cout << " load error";
+		return;
+	}
+	Mat replicate;
+	// aaaaaa|abcdefgh|hhhhhhh 复制最后一个像素
+	imshow("replicate", img);
+	cv::copyMakeBorder(img, replicate, 10, 10, 10, 10, cv::BORDER_REPLICATE);
+	imshow("replicate", replicate);
+	
+	// fedcba | abcdefgh | hgfedcb
+	Mat reflect;
+	cv::copyMakeBorder(img, reflect, 10, 10, 10, 10, cv::BORDER_REFLECT);
+	imshow("reflect", reflect);
+	Mat reflect101;
+	// gfedcb|abcdefgh|gfedcba
+	cv::copyMakeBorder(img, reflect101, 10, 10, 10, 10, cv::BORDER_REFLECT101);
+	//  cdefgh|abcdefgh|abcdefg
+	Mat wrap;
+	cv::copyMakeBorder(img, wrap, 10, 10, 10, 10, cv::BORDER_WRAP);
+	Mat constant;
+	const Scalar BLUE(255, 0, 0);
+	cv::copyMakeBorder(img, constant, 10, 10, 10, 10, cv::BORDER_CONSTANT, BLUE);
+	imshow("constant", constant);
+	imshow("asasd", img);
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+}
+
