@@ -124,6 +124,7 @@ void arithmetic_operation::demo01_add(void)
 	//
 	// 合成图像
 	cv::Mat dst;
+	// 一般情况下 我们用add 不用+
 	cv::add(tmp, logo, dst);
 	imshow("dst", dst);
 	imshow("tmp", tmp);
