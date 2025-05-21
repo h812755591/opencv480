@@ -89,3 +89,58 @@ void basic_operation::demo03_boarder(void)
 
 }
 
+void arithmetic_operation::demo01_add(void)
+{
+	Mat img = imread(base_path  +"doc_data/"+ "dog.jpeg");
+	if (img.empty())
+	{
+		cout << " load error";
+		return;
+	}
+	// 创建logo
+	Mat logo = Mat::zeros(200,200,CV_8UC3);
+	Mat mask = Mat::zeros(200, 200, CV_8UC1);
+	// 获取区域 进行常量填充
+	logo(cv::Range(20, 120), cv::Range(20, 120)) = cv::Vec3b(0, 0, 255);
+	logo(cv::Range(80, 180), cv::Range(80, 180)) = cv::Vec3b(0, 255, 0);
+	//
+	mask(cv::Range(20, 120), cv::Range(20, 120)) = 255;
+	mask(cv::Range(80, 180), cv::Range(80, 180)) = 255;
+	imshow("mask",mask);
+	// 对mask按位求反
+	cv::Mat m;
+	cv::bitwise_not(mask, m);
+	imshow("mnot", m);
+	//
+	cv::Mat roi = img(cv::Rect(0, 0, 200, 200));
+	//
+	cv::Mat tmp;
+	// 掩膜中的元素可以是任意值，但 OpenCV 仅根据“是否为零”判断有效性。
+	// 但是一般情况下  ​0（无效）和 255（有效）​​ 的二值掩膜
+	// cv::bitwise_and(roi, roi, tmp, m); 非0值为有效区域，保留，0值置零
+	cv::bitwise_and(roi, roi, tmp, m);// 指定mask
+	//​方式2​：掩膜非零区域写入 roi 值，掩膜零区域 ​保留tmp原值​ 必须tmp 全零才和上面等价
+	//roi.copyTo(tmp,m);
+	//
+	// 合成图像
+	cv::Mat dst;
+	cv::add(tmp, logo, dst);
+	imshow("dst", dst);
+	imshow("tmp", tmp);
+	imshow("img", img);
+	imshow("logo", logo);
+	dst.copyTo(img(cv::Rect(0, 0, 200, 200)));
+	cv::imshow("dog", img);
+
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+
+}
+/*
+案例分析 目的是将roi区域填充成不同颜色 这个区域是不规则多边形两个正方形重叠
+1,首先获取roi 区域
+2,roi 区域 使用mask 进行挖洞 这个洞是两个正方向重叠区域 cv::bitwise_and(roi, roi, tmp, m);
+3,然后roi 区域再用logo 填充 ，具体方法是add
+4,然后再将roi区域拷贝到原图
+
+*/

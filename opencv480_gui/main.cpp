@@ -11,6 +11,7 @@ int main()
 	//draw_func::demo01_circle();
 	//basic_operation::demo01_access_modify();
 	//basic_operation::demo02_split_merge();
-	basic_operation::demo03_boarder();
+	//basic_operation::demo03_boarder();
+	arithmetic_operation::demo01_add();
 	return 1;
 }
