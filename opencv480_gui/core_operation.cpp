@@ -140,7 +140,8 @@ void arithmetic_operation::demo01_add(void)
 /*
 案例分析 目的是将roi区域填充成不同颜色 这个区域是不规则多边形两个正方形重叠
 1,首先获取roi 区域
-2,roi 区域 使用mask 进行挖洞 这个洞是两个正方向重叠区域 cv::bitwise_and(roi, roi, tmp, m);
+2,roi 区域 使用mask 进行挖洞 这个洞是两个正方向重叠区域 
+cv::bitwise_and(roi, roi, tmp, m); 挖洞的范围是mask
 3,然后roi 区域再用logo 填充 ，具体方法是add
 4,然后再将roi区域拷贝到原图
 
