@@ -194,3 +194,53 @@ void arithmetic_operation::demo03_add_weight(void)
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 }
+
+void arithmetic_operation::demo05_Bitwise_Operations(void)
+{
+	string mid_path("doc_data/");
+	Mat m1 = imread(base_path + mid_path + "messi5.jpg");
+	Mat m2 = imread(base_path + mid_path + "opencv-logo-white.png");
+
+	if (m1.empty() || m2.empty()) {
+		cout << "load error" << endl;
+		return;
+	}
+
+	Mat roi = m1(cv::Rect(0, 0, m2.cols, m2.rows));
+
+	// 转灰度
+	Mat m2_gray;
+	cvtColor(m2, m2_gray, cv::COLOR_BGR2GRAY);
+
+	// 创建掩模
+	Mat mask;
+	threshold(m2_gray, mask, 10, 255, cv::THRESH_BINARY); // 更高阈值更保险
+	Mat mask_inv;
+	bitwise_not(mask, mask_inv);
+
+	// 挖掉主图 ROI 的 logo 区域
+	Mat roi_bg;
+	bitwise_and(roi, roi, roi_bg, mask_inv);
+
+	// 取出 logo 有效区域
+	Mat logo_fg;
+	bitwise_and(m2, m2, logo_fg, mask);
+
+	// 对 logo_fg 做 alpha 融合处理
+	Mat blended_logo;
+	double alpha = 0.7;
+	Mat black_bg = Mat::zeros(logo_fg.size(), logo_fg.type());
+	addWeighted(black_bg, 1 - alpha, logo_fg, alpha, 0.0, blended_logo);
+
+	// 将 blended_logo 融合到 roi 上（按掩模）
+	Mat final_roi = roi_bg.clone();
+	blended_logo.copyTo(final_roi, mask);
+
+	// 写回主图
+	final_roi.copyTo(m1(cv::Rect(0, 0, final_roi.cols, final_roi.rows)));
+
+	imshow("Blended Result", m1);
+	imshow("mask", mask);
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+}

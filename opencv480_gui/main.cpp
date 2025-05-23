@@ -14,7 +14,8 @@ int main()
 	//basic_operation::demo03_boarder();
 	//arithmetic_operation::demo01_add();
 	//arithmetic_operation::demo02_add_weight();
-	arithmetic_operation::demo03_add_weight();
-	
+	//arithmetic_operation::demo03_add_weight();
+	//arithmetic_operation::demo04_Bitwise_Operations();
+	arithmetic_operation::demo05_Bitwise_Operations();
 	return 1;
 }

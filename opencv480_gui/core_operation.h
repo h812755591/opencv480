@@ -12,6 +12,8 @@ namespace arithmetic_operation
 	void demo01_add(void);
 	void demo02_add_weight(void);
 	void demo03_add_weight(void);
+	void demo04_Bitwise_Operations(void);
+	void demo05_Bitwise_Operations(void);
 }
 
 #endif // !CORE_OPERATION_H_
