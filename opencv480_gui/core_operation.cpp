@@ -243,4 +243,11 @@ void arithmetic_operation::demo05_Bitwise_Operations(void)
 	imshow("mask", mask);
 	cv::waitKey(0);
 	cv::destroyAllWindows();
+
+	/*
+	1,二值化 获取mask
+	2,去掉roi区域背景用于填充
+	4,提取logo增加背景并进行融合
+	5,填充
+	*/
 }
