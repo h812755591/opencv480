@@ -13,6 +13,8 @@ int main()
 	//basic_operation::demo02_split_merge();
 	//basic_operation::demo03_boarder();
 	//arithmetic_operation::demo01_add();
-	arithmetic_operation::demo02_add_weight();
+	//arithmetic_operation::demo02_add_weight();
+	arithmetic_operation::demo03_add_weight();
+	
 	return 1;
 }

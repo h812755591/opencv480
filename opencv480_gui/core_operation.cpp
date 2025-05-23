@@ -173,3 +173,24 @@ void arithmetic_operation::demo02_add_weight(void)
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 }
+
+void arithmetic_operation::demo03_add_weight(void)
+{
+	string mid_path("doc_data/lilao/");
+	Mat m1 = imread(base_path + mid_path + "back.jpeg");
+	Mat m2 = imread(base_path + mid_path + "smallcat1.jpeg");
+	cv::imshow("ml", m1);
+	cv::imshow("logo", m2);
+	if (m1.empty() || m2.empty())
+	{
+		cout << " load error";
+		return;
+	}
+	cout << m1.size() << endl;
+	cout << m2.size() << endl;
+	Mat dst;
+	cv::addWeighted(m1, 0.3, m2, 0.7,0, dst);
+	cv::imshow("dst", dst);
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+}
