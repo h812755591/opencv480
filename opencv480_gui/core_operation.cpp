@@ -140,9 +140,36 @@ void arithmetic_operation::demo01_add(void)
 /*
 案例分析 目的是将roi区域填充成不同颜色 这个区域是不规则多边形两个正方形重叠
 1,首先获取roi 区域
-2,roi 区域 使用mask 进行挖洞 这个洞是两个正方向重叠区域 
-cv::bitwise_and(roi, roi, tmp, m); 挖洞的范围是mask
+2,roi 区域 使用mask 进行挖洞 这个洞是两个正方向重叠区域
+cv::bitwise_and(roi, roi, tmp, m);挖洞的范围是mask
 3,然后roi 区域再用logo 填充 ，具体方法是add
 4,然后再将roi区域拷贝到原图
 
 */
+void arithmetic_operation::demo02_add_weight(void)
+{
+	string mid_path("doc_data/");
+	Mat ml = imread(base_path + mid_path + "ml.png");
+	Mat logo = imread(base_path + mid_path + "opencv-logo.png");
+	cv::imshow("ml", ml);
+	cv::imshow("logo", logo);
+	if (ml.empty() || logo.empty())
+	{
+		cout << " load error";
+		return;
+	}
+	// addWeighted() 函数要求两个输入图像必须具有相同的尺寸和通道数
+	cout << ml.size() << endl;
+	cout << logo.size() << endl;
+	cv::resize(logo, logo, ml.size());  // 将 logo 调整为和 ml 一样大
+	cout << logo.size() << endl;
+	
+	cv::imshow("logo1", logo);
+	Mat dst;
+	cv::addWeighted(ml, 0.7, logo, 0.3, 0, dst);
+	cv::namedWindow("dog", cv::WINDOW_NORMAL);  // 允许手动调整窗口
+	cv::resizeWindow("dog", 800, 800);          // 设置较大的显示尺寸
+	cv::imshow("dog", dst);
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+}

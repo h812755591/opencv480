@@ -10,6 +10,7 @@ namespace basic_operation
 namespace arithmetic_operation
 {
 	void demo01_add(void);
+	void demo02_add_weight(void);
 }
 
 #endif // !CORE_OPERATION_H_
