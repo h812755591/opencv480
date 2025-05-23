@@ -197,48 +197,45 @@ void arithmetic_operation::demo03_add_weight(void)
 
 void arithmetic_operation::demo05_Bitwise_Operations(void)
 {
-	string mid_path("doc_data/");
-	Mat m1 = imread(base_path + mid_path + "messi5.jpg");
-	Mat m2 = imread(base_path + mid_path + "opencv-logo-white.png");
+	string mid_path = "doc_data/";
+	Mat m1 = imread(base_path + mid_path + "messi5.jpg");                // 主图像
+	Mat m2 = imread(base_path + mid_path + "opencv-logo-white.png");     // 白底 logo 图
 
 	if (m1.empty() || m2.empty()) {
 		cout << "load error" << endl;
 		return;
 	}
 
+	// 获取 ROI（主图中贴图的位置，左上角）
 	Mat roi = m1(cv::Rect(0, 0, m2.cols, m2.rows));
 
-	// 转灰度
+	// Step 1: 将 logo 转灰度，用于生成掩模
 	Mat m2_gray;
 	cvtColor(m2, m2_gray, cv::COLOR_BGR2GRAY);
 
-	// 创建掩模
+	// Step 2: 创建正向掩模（保留 logo 图案，忽略白色背景）
 	Mat mask;
-	threshold(m2_gray, mask, 10, 255, cv::THRESH_BINARY); // 更高阈值更保险
+	threshold(m2_gray, mask, 100, 255, cv::THRESH_BINARY);  // logo 图案区域为 255
 	Mat mask_inv;
-	bitwise_not(mask, mask_inv);
+	bitwise_not(mask, mask_inv);                      // 背景区域为 255，用于“挖洞”
 
-	// 挖掉主图 ROI 的 logo 区域
+	// Step 3: 用 mask_inv 在主图 roi 中“挖出洞”
 	Mat roi_bg;
-	bitwise_and(roi, roi, roi_bg, mask_inv);
+	bitwise_and(roi, roi, roi_bg, mask_inv);          // 清除背景区域
 
-	// 取出 logo 有效区域
+	// Step 4: 用 mask 取出 logo 的有效图案
 	Mat logo_fg;
 	bitwise_and(m2, m2, logo_fg, mask);
 
-	// 对 logo_fg 做 alpha 融合处理
-	Mat blended_logo;
-	double alpha = 0.7;
-	Mat black_bg = Mat::zeros(logo_fg.size(), logo_fg.type());
-	addWeighted(black_bg, 1 - alpha, logo_fg, alpha, 0.0, blended_logo);
+	// Step 5: 将 logo 图案与 roi 背景加权融合（实现透明叠加）
+	Mat blended;
+	double alpha = 0.2;
+	addWeighted(roi_bg, 1.0 - alpha, logo_fg, alpha, 0.0, blended);
 
-	// 将 blended_logo 融合到 roi 上（按掩模）
-	Mat final_roi = roi_bg.clone();
-	blended_logo.copyTo(final_roi, mask);
+	// Step 6: 把融合结果贴回主图
+	blended.copyTo(m1(cv::Rect(0, 0, blended.cols, blended.rows)));
 
-	// 写回主图
-	final_roi.copyTo(m1(cv::Rect(0, 0, final_roi.cols, final_roi.rows)));
-
+	// Step 7: 显示结果
 	imshow("Blended Result", m1);
 	imshow("mask", mask);
 	cv::waitKey(0);
@@ -249,5 +246,16 @@ void arithmetic_operation::demo05_Bitwise_Operations(void)
 	2,去掉roi区域背景用于填充
 	4,提取logo增加背景并进行融合
 	5,填充
+	6,优化
+	GaussianBlur(logo_fg, logo_fg, Size(3, 3), 0); 对 logo 做轻度模糊柔化边缘
+	方式一：用 distance transform 对 mask 做渐变
+
+	方式二：手动生成 alpha mask（中心透明度高、边缘低） 生成透明渐变掩模（羽化效果）
+	Mat mask_f;
+	mask.convertTo(mask_f, CV_32F, 1.0 / 255); // 归一化掩模
+	cv::GaussianBlur(mask_f, mask_f, Size(31, 31), 15);  // feather
+	然后改用 cv::multiply() 做 alpha blend 而不是 addWeighted()。
+
+
 	*/
 }
