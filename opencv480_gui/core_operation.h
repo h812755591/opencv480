@@ -14,5 +14,8 @@ namespace arithmetic_operation
 	void demo03_add_weight(void);
 	void demo05_Bitwise_Operations(void);
 }
-
+namespace performance_measurement
+{
+	void demo01_tick(void);
+}
 #endif // !CORE_OPERATION_H_

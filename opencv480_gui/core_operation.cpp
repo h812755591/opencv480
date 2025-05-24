@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <ctime>
 #include "opencv_head.h"
 #include "core_operation.h"
 using std::string;
@@ -257,5 +258,25 @@ void arithmetic_operation::demo05_Bitwise_Operations(void)
 	然后改用 cv::multiply() 做 alpha blend 而不是 addWeighted()。
 
 
+	*/
+}
+
+void performance_measurement::demo01_tick(void)
+{/*
+	e1 = cv.getTickCount()
+		# your code execution
+		e2 = cv.getTickCount()
+		time = (e2 - e1) / cv.getTickFrequency()*/
+	int64 e1 = cv::getTickCount();
+	//
+	int64 e2 = cv::getTickCount();
+	double time = (e2 - e1) / cv::getTickFrequency(); //频率 每秒震荡次数
+	cout << cv::useOptimized() << endl;
+	/*
+	#include <ctime>
+time_t start = time(nullptr);
+// 被测代码
+time_t end = time(nullptr);
+double elapsed = difftime(end, start);
 	*/
 }
