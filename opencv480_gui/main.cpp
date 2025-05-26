@@ -4,6 +4,10 @@
 #include "start_video.h"
 #include "draw_function.h"
 #include "core_operation.h"
+#include "image_processing.h"
+
+
+
 int main()
 {
 	/*start_image::show();*/
@@ -16,6 +20,7 @@ int main()
 	//arithmetic_operation::demo02_add_weight();
 	//arithmetic_operation::demo03_add_weight();
 	//arithmetic_operation::demo04_Bitwise_Operations();
-	arithmetic_operation::demo05_Bitwise_Operations();
+	//arithmetic_operation::demo05_Bitwise_Operations();
+	changing_colorspaces::demo01_inRange();
 	return 1;
 }
