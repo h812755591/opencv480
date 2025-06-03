@@ -21,6 +21,8 @@ int main()
 	//arithmetic_operation::demo03_add_weight();
 	//arithmetic_operation::demo04_Bitwise_Operations();
 	//arithmetic_operation::demo05_Bitwise_Operations();
-	changing_colorspaces::demo01_inRange();
+	//changing_colorspaces::demo01_inRange();
+	//image_thresholding::demo01_threshold();
+	image_thresholding::demo02_adaptive_threshold();
 	return 1;
 }

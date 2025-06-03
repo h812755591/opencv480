@@ -20,7 +20,8 @@ namespace geometric_transformations
 }
 namespace image_thresholding
 {
-
+	void demo01_threshold(void);
+	void demo02_adaptive_threshold(void);
 }
 namespace smoothing_images
 {
