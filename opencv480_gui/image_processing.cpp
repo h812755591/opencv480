@@ -188,7 +188,7 @@ void image_thresholding::demo01_threshold(void)
 
 void image_thresholding::demo02_adaptive_threshold(void)
 {
-	Mat img = imread(doc_path + "gradient.png", cv::IMREAD_COLOR);
+	Mat img = imread(doc_path + "sudoku.png", cv::IMREAD_COLOR);
 	if (img.empty())
 	{
 		cout << " load error";
@@ -200,8 +200,44 @@ void image_thresholding::demo02_adaptive_threshold(void)
 	string src_name = "img";
 	cv::namedWindow(src_name, windows_style);
 	imshow(src_name, img);
-
 	//
+	Mat img_gray;
+	cv::cvtColor(img, img_gray, cv::COLOR_BGR2GRAY);
+	Mat binary_adtive1;
+	/*
+	计算步骤
+	​确定邻域范围​：
+	对于图像中的每个像素点 (x, y)，以其为中心确定一个大小为 blockSize × blockSize 的邻域。
+	注意：blockSize 必须是奇数（如 3, 5, 7 等），以确保中心点存在。
+	​计算邻域均值​：
+	计算该邻域内所有像素的灰度值的算术平均值（mean）。
+	计算公式：
+	mean= 
+	blockSize×blockSize
+	1
+	​
+  
+	i∈邻域
+	∑
+	​
+	 I(i)
+	其中 I(i) 表示邻域内第 i 个像素的灰度值。
+	​计算阈值​：
+	将计算得到的均值减去常数 C（即参数中的 C 值）得到该像素的阈值 T(x, y)：
+	T(x,y)=mean−C
+	​应用阈值​：
+	根据阈值类型（THRESH_BINARY 或 THRESH_BINARY_INV）进行二值化：
+	*/
+	cv::adaptiveThreshold(img_gray, binary_adtive1, 255,
+		cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, 25, 7);
+	//
+	Mat binary_adtive2;
+	//只是进行了加权求和
+	//w(i, j) = exp(-((i-x)^2 + (j-y)^2) / (2 * sigma^2)) 
+	//sigma = 0.3 * ((blockSize-1)*0.5 - 1) + 0.8
+
+	cv::adaptiveThreshold(img_gray, binary_adtive2, 255,
+		cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 25, 7);
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 }
