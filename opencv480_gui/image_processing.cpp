@@ -241,3 +241,219 @@ void image_thresholding::demo02_adaptive_threshold(void)
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 }
+
+void smoothing_images::demo01_filter2D(void)
+{
+	Mat img = imread(doc_path + "opencv-logo.png", cv::IMREAD_COLOR);
+	if (img.empty())
+	{
+		cout << " load error";
+		return;
+	}
+	int windows_style = cv::WINDOW_AUTOSIZE | cv::WINDOW_KEEPRATIO;
+	//
+	string src_name = "img";
+	cv::namedWindow(src_name, windows_style);
+	imshow(src_name, img);
+	
+	//
+	Mat dst;
+	//filter2D 自定义任意核	
+	// 锐化  将原始图像与模糊图像的差值（即高频细节）按比例加回到原始图像上
+	cv::Mat sharpen_kernel = (cv::Mat_<float>(3, 3) <<
+		0, -1, 0,
+		-1, 5, -1,
+		0, -1, 0);
+	Mat sharpened;
+	// ​**ddepth = -1**​ 输出图像使用与输入图像相同的位深度
+	//逐通道独立卷积，共享核参数
+	//锐化核本质是原始图像与拉普拉斯算子的组合：
+
+	cv::filter2D(img, sharpened, -1, sharpen_kernel);
+	//
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+	/*
+	#include <opencv2/opencv.hpp>
+#include <iostream>
+
+using namespace cv;
+using namespace std;
+
+// 可视化卷积核函数
+void visualizeKernel(Mat kernel, String name) {
+    // 归一化核为0-255范围
+    Mat kernel_viz;
+    normalize(kernel, kernel_viz, 0, 255, NORM_MINMAX, CV_8U);
+    
+    // 放大可视化
+    resize(kernel_viz, kernel_viz, Size(200, 200), 0, 0, INTER_NEAREST);
+    
+    // 显示核
+    imshow("Kernel: " + name, kernel_viz);
+}
+
+int main() {
+    // 1. 读取图像
+    Mat img = imread("opencv-logo.png", IMREAD_COLOR);
+    if (img.empty()) {
+        cerr << "Error: Could not load image!" << endl;
+        return -1;
+    }
+    
+    // 调整大小以便显示
+    resize(img, img, Size(600, 600 * img.rows / img.cols));
+    
+    // 创建显示窗口
+    namedWindow("Original Image", WINDOW_AUTOSIZE);
+    imshow("Original Image", img);
+    
+    // 2. 定义不同卷积核
+    // 锐化核
+    Mat sharpen_kernel = (Mat_<float>(3, 3) << 
+        0, -1, 0,
+        -1, 5, -1,
+        0, -1, 0);
+    
+    // 边缘检测核 (Sobel水平)
+    Mat edge_kernel = (Mat_<float>(3, 3) <<
+        -1, -2, -1,
+        0, 0, 0,
+        1, 2, 1);
+    
+    // 模糊核 (高斯近似)
+    Mat blur_kernel = (Mat_<float>(5, 5) << 
+        1, 4, 6, 4, 1,
+        4, 16, 24, 16, 4,
+        6, 24, 36, 24, 6,
+        4, 16, 24, 16, 4,
+        1, 4, 6, 4, 1) / 256.0;
+    
+    // 浮雕效果核
+    Mat emboss_kernel = (Mat_<float>(3, 3) << 
+        -1, -1, 0,
+        -1, 1, 1,
+        0, 1, 1);
+    
+    // 可视化所有核
+    visualizeKernel(sharpen_kernel, "Sharpen");
+    visualizeKernel(edge_kernel, "Edge Detection");
+    visualizeKernel(blur_kernel, "Blur");
+    visualizeKernel(emboss_kernel, "Emboss");
+    
+    // 3. 应用卷积核
+    Mat sharpened, edges, blurred, embossed;
+    
+    // 锐化处理 (保留色彩)
+    Mat img_yuv;
+    cvtColor(img, img_yuv, COLOR_BGR2YUV);
+    vector<Mat> channels;
+    split(img_yuv, channels);
+    filter2D(channels[0], channels[0], -1, sharpen_kernel); // 仅处理亮度通道
+    merge(channels, img_yuv);
+    cvtColor(img_yuv, sharpened, COLOR_YUV2BGR);
+    
+    // 边缘检测
+    Mat img_gray;
+    cvtColor(img, img_gray, COLOR_BGR2GRAY);
+    filter2D(img_gray, edges, CV_16S, edge_kernel); // 使用有符号输出
+    convertScaleAbs(edges, edges); // 转换为绝对值
+    
+    // 模糊处理
+    filter2D(img, blurred, -1, blur_kernel);
+    
+    // 浮雕效果
+    filter2D(img, embossed, -1, emboss_kernel, Point(-1, -1), 150); // 添加偏移量150
+    
+    // 4. 显示结果
+    namedWindow("Sharpened (YUV)", WINDOW_AUTOSIZE);
+    namedWindow("Edge Detection", WINDOW_AUTOSIZE);
+    namedWindow("Blurred", WINDOW_AUTOSIZE);
+    namedWindow("Embossed", WINDOW_AUTOSIZE);
+    
+    imshow("Sharpened (YUV)", sharpened);
+    imshow("Edge Detection", edges);
+    imshow("Blurred", blurred);
+    imshow("Embossed", embossed);
+    
+    // 5. 高级应用：选择性锐化
+    // 创建边缘掩码
+    Mat edges_mask;
+    Canny(img, edges_mask, 100, 200);
+    
+    // 整体锐化
+    Mat globally_sharpened;
+    filter2D(img, globally_sharpened, -1, sharpen_kernel);
+    
+    // 组合结果：仅在边缘区域应用锐化
+    Mat selectively_sharpened = img.clone();
+    globally_sharpened.copyTo(selectively_sharpened, edges_mask);
+    
+    namedWindow("Selective Sharpening", WINDOW_AUTOSIZE);
+    imshow("Selective Sharpening", selectively_sharpened);
+    
+    // 6. 性能对比测试
+    cout << "=== Performance Test ===" << endl;
+    
+    // 测试不同核大小的速度
+    Mat large_blur_kernel = getGaussianKernel(15, 2.0) * getGaussianKernel(15, 2.0).t();
+    
+    Mat test_img;
+    resize(img, test_img, Size(1200, 1200)); // 更大的测试图像
+    
+    double t;
+    
+    // 小核 (3x3)
+    t = (double)getTickCount();
+    filter2D(test_img, sharpened, -1, sharpen_kernel);
+    t = ((double)getTickCount() - t) / getTickFrequency();
+    cout << "3x3 kernel time: " << t * 1000 << " ms" << endl;
+    
+    // 大核 (15x15)
+    t = (double)getTickCount();
+    filter2D(test_img, blurred, -1, large_blur_kernel);
+    t = ((double)getTickCount() - t) / getTickFrequency();
+    cout << "15x15 kernel time: " << t * 1000 << " ms" << endl;
+    
+    // 可分离核优化
+    cout << "\nOptimization Techniques:" << endl;
+    
+    // 使用 sepFilter2D 优化
+    Mat row_kernel = getGaussianKernel(15, 2.0);
+    Mat col_kernel = row_kernel.t();
+    
+    t = (double)getTickCount();
+    sepFilter2D(test_img, blurred, -1, row_kernel, col_kernel);
+    t = ((double)getTickCount() - t) / getTickFrequency();
+    cout << "Separable kernel time: " << t * 1000 << " ms" << endl;
+    
+    // 7. 实时视频处理示例
+    VideoCapture cap(0);
+    if (!cap.isOpened()) {
+        cerr << "Error: Cannot open camera!" << endl;
+    } else {
+        namedWindow("Real-time Edge Detection", WINDOW_AUTOSIZE);
+        
+        Mat frame, processed;
+        while (waitKey(30) != 27) { // 按ESC退出
+            cap >> frame;
+            if (frame.empty()) break;
+            
+            // 转换为灰度
+            cvtColor(frame, processed, COLOR_BGR2GRAY);
+            
+            // 应用边缘检测
+            filter2D(processed, processed, CV_16S, edge_kernel);
+            convertScaleAbs(processed, processed);
+            
+            // 显示结果
+            imshow("Real-time Edge Detection", processed);
+        }
+    }
+    
+    waitKey(0);
+    destroyAllWindows();
+    return 0;
+}
+	*/
+}
