@@ -24,6 +24,7 @@ int main()
 	//changing_colorspaces::demo01_inRange();
 	//image_thresholding::demo01_threshold();
 	//image_thresholding::demo02_adaptive_threshold();
-	smoothing_images::demo01_filter2D();
+	//smoothing_images::demo01_filter2D();
+	smoothing_images::demo01_blur();
 	return 1;
 }

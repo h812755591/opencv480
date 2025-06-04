@@ -26,5 +26,6 @@ namespace image_thresholding
 namespace smoothing_images
 {
 	void demo01_filter2D(void);
+	void demo01_blur(void);
 }
 #endif // !IMAGE_PROCESSING_H_

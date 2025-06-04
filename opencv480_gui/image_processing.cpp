@@ -459,3 +459,38 @@ int main() {
 }
 	*/
 }
+
+void smoothing_images::demo01_blur(void)
+{
+	Mat img = imread(doc_path + "opencv-logo-white.png", cv::IMREAD_COLOR);
+	if (img.empty())
+	{
+		cout << " load error";
+		return;
+	}
+	int windows_style = cv::WINDOW_AUTOSIZE | cv::WINDOW_KEEPRATIO;
+	//
+	string src_name = "img";
+	cv::namedWindow(src_name, windows_style);
+	imshow(src_name, img);
+
+	//cv::boxFilter 可以归一化 也可以不归一化，归一化和cv::blur一样
+	Mat dst;
+	cv::blur(img,dst,cv::Size(3,3));
+	string blur_name = "blur";
+	cv::namedWindow(blur_name, windows_style);
+	imshow(blur_name, dst);//
+
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+	/*
+	Gaussian Blurring 利用高斯公式
+	Median Blurring  取窗口 排序  取中值  去除椒盐噪声（如旧照片扫描、传感器噪声等）  
+	                 //需要保留边缘的去噪任务
+                     //医学图像处理（如去除X光图像的噪声）
+	Bilateral Filtering  双边滤波
+	也就是说如果窗口时3*3，其要计算各个位置上的空间权重和像素值权重，统计总的权重，
+	然后再相加求和 计算中心点的像素值 
+
+	*/
+}
