@@ -257,7 +257,6 @@ void smoothing_images::demo01_filter2D(void)
 	imshow(src_name, img);
 	
 	//
-	Mat dst;
 	//filter2D 自定义任意核	
 	// 锐化  将原始图像与模糊图像的差值（即高频细节）按比例加回到原始图像上
 	cv::Mat sharpen_kernel = (cv::Mat_<float>(3, 3) <<
@@ -270,6 +269,9 @@ void smoothing_images::demo01_filter2D(void)
 	//锐化核本质是原始图像与拉普拉斯算子的组合：
 
 	cv::filter2D(img, sharpened, -1, sharpen_kernel);
+	string sharpen_kernel_name = "sharpen_kernel";
+	cv::namedWindow(sharpen_kernel_name, windows_style);
+	imshow(sharpen_kernel_name, sharpened);
 	//
 	cv::waitKey(0);
 	cv::destroyAllWindows();
