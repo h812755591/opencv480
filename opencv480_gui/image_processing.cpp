@@ -88,6 +88,7 @@ void changing_colorspaces::demo01_inRange(void)
 	imshow("img_hsv", img_hsv);
 	//因为是绿色 我们需要找到绿色的范围
 	Mat mask;
+	//Scalar是 cv::Scalar_<double>  的别名
 	Scalar lower=Scalar(35, 43, 46);
 	Scalar upper = Scalar(77, 255, 255);
 	cv::inRange(img_hsv, lower,upper,mask);
@@ -100,6 +101,7 @@ void changing_colorspaces::demo01_inRange(void)
 	Mat mask_inv  ;
 	cv::bitwise_not(mask, mask_inv);
 	cv::bitwise_and(img,img,dst, mask_inv);//挖洞
+	//
 
 	cv::namedWindow("dst", windows_style);
 	imshow("dst", dst);
@@ -110,6 +112,66 @@ void changing_colorspaces::demo01_inRange(void)
 	1,我们要提取一个区域，比如一块绿色区域，就必须找到mask
 	2,通过bitwise_and
 	*/
+}
+void changing_colorspaces::demo02_inRange(void)
+{
+	/*
+	cv::inRange 可以用于灰度图和彩色图。
+	他只能用于范围 比如[a,b]范围内
+	cv::threshold 则一般用于灰度图 其原理属于>变为1 小于变为0 
+	二者属于互补关系
+	*/
+	Mat img = imread(base_path + "greenback.png", cv::IMREAD_COLOR);
+	if (img.empty()) {
+		cout << "读取失败";
+		return;
+	}
+	int windows_style = cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO;
+	string win_name = "img";
+	cv::namedWindow(win_name,windows_style);
+	imshow(win_name,img);
+	//转为hsv
+	Mat hsv_img;
+	cv::cvtColor(img, hsv_img,cv::COLOR_BGR2HSV);
+
+	Mat mask;//最终转化为二值图
+	//Scalar是 cv::Scalar_<double>  的别名
+	//最终的比较是内部处理 ，不需要我们关心
+	//这三个值可以表示BGR 也可以表示HSV 这里是HSV
+	Scalar lower = Scalar(35, 43, 46);
+	Scalar upper = Scalar(77, 255, 255);
+	cv::inRange(hsv_img, lower, upper, mask);
+	win_name = "hsv_img";
+	
+	cv::namedWindow(win_name, windows_style);
+	Mat mask_inv;
+	//bitwise_not这个如何处理呢？ 执行按位取反操作 mask 是 
+	//mask 非零区域：执行位取反 其它区域不变
+	cv::bitwise_not(mask, mask_inv);
+	imshow(win_name, mask_inv);
+	//
+	Mat dst;
+	
+	//按位与操作 mask_inv 限定了0变为0 ，非0（执行操作）
+	/*
+	特性	cv::bitwise_and 的mask处理	cv::bitwise_or 的mask处理
+	​mask非零区域​	执行按位与操作	    执行按位或操作
+	​mask为零区域​	输出设为0（纯黑）	​    保持dst原始值不变​
+	​本质操作​	强制修改mask=0区域为黑色	保护mask=0区域不被修改
+	​在您案例中的效果​	绿幕图中创建"黑洞"（黑色人物剪影）	保持新背景完整
+	​适合场景​	去除背景/挖洞	前景合成/贴图
+	*/
+	//所以bitwise_and和bitwise_or 对于mask 的处理方式不一样
+	cv::bitwise_and(img, img, dst, mask_inv);//挖洞
+	win_name = "dst_img";
+	cv::namedWindow(win_name, windows_style);
+	imshow(win_name, dst);
+	//我们可以用
+
+	//
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+
 }
 /*
 
@@ -493,4 +555,9 @@ void smoothing_images::demo01_blur(void)
 	然后再相加求和 计算中心点的像素值 
 
 	*/
+}
+
+void morphological_transformation::demo01_erosion(void)
+{
+	
 }

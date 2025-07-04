@@ -12,6 +12,7 @@ namespace changing_colorspaces
 
 	*/
 	void demo01_inRange(void);
+	void demo02_inRange(void);
 
 }
 namespace geometric_transformations
@@ -27,5 +28,9 @@ namespace smoothing_images
 {
 	void demo01_filter2D(void);
 	void demo01_blur(void);
+}
+namespace morphological_transformation
+{
+	void demo01_erosion(void);
 }
 #endif // !IMAGE_PROCESSING_H_

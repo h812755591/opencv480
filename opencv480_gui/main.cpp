@@ -22,9 +22,10 @@ int main()
 	//arithmetic_operation::demo04_Bitwise_Operations();
 	//arithmetic_operation::demo05_Bitwise_Operations();
 	//changing_colorspaces::demo01_inRange();
+	changing_colorspaces::demo02_inRange();
 	//image_thresholding::demo01_threshold();
 	//image_thresholding::demo02_adaptive_threshold();
 	//smoothing_images::demo01_filter2D();
-	smoothing_images::demo01_blur();
+	//smoothing_images::demo01_blur();
 	return 1;
 }
