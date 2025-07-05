@@ -19,6 +19,9 @@ namespace geometric_transformations
 {
 	//图像的几何变化
 	void demo01_warpAffine(void);
+	void demo02_warpAffine_rotation(void);//旋转变换
+	void demo03_warpAffine_Shear(void);//剪切变换
+	void demo04_rotation90(void);//顺时针旋转90度
 }
 namespace image_thresholding
 {

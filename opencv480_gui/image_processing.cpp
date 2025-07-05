@@ -616,3 +616,117 @@ void geometric_transformations::demo01_warpAffine(void)
 	cv::waitKey(0);
 	cv::destroyAllWindows();
 }
+
+void geometric_transformations::demo02_warpAffine_rotation(void)
+{
+	Mat img = imread("Resources/messi5.jpg", cv::IMREAD_COLOR);
+	if (img.empty())
+	{
+		cout << " load error";
+		return;
+	}
+	int windows_style = cv::WINDOW_AUTOSIZE | cv::WINDOW_KEEPRATIO;
+	//
+	string win_name = "img";
+	cv::namedWindow(win_name, windows_style);
+	imshow(win_name, img);
+	//
+	double angle = 90.0;  // 旋转角度（逆时针）
+	double scale = 1.0;    // 缩放因子（1.0表示不缩放）如果大于1 则旋转的图像变大
+	//这个表示按照图像中心点旋转90度，但是和原图像大小一样
+	cv::Point2f center(img.cols / 2.0f, img.rows / 2.0f);
+	cv::Mat transform_matrix = cv::getRotationMatrix2D(center, angle, scale);
+	cv::Mat translated_img;
+	//cv::warpAffine(
+	//	img,                    // 输入图像
+	//	translated_img,          // 输出图像
+	//	transform_matrix,        // 变换矩阵
+	//	img.size(),              // 输出尺寸（与输入相同）
+	//	cv::INTER_LINEAR,        // 插值方法
+	//	cv::BORDER_CONSTANT,     // 边界处理方式 也是默认的处理方式
+	//	cv::Scalar(0, 0, 0)      // 边界填充颜色（黑色）
+	//);
+	// ==== 关键修改：调整输出尺寸 ====
+	cv::Rect2f bbox = cv::RotatedRect(center, img.size(), angle).boundingRect2f();
+	transform_matrix.at<double>(0, 2) += bbox.width / 2.0 - center.x;
+	transform_matrix.at<double>(1, 2) += bbox.height / 2.0 - center.y;
+	//上面其实做了一个平移
+	cv::warpAffine(
+		img,                    // 输入图像
+		translated_img,          // 输出图像
+		transform_matrix,        // 变换矩阵
+		bbox.size(),
+		cv::INTER_LINEAR,        // 插值方法
+		cv::BORDER_CONSTANT,     // 边界处理方式 也是默认的处理方式
+		cv::Scalar(0, 0, 0)      // 边界填充颜色（黑色）
+	);
+	win_name = "trans_img";
+	cv::namedWindow(win_name, windows_style);
+	imshow(win_name, translated_img);
+	//
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+}
+
+void geometric_transformations::demo03_warpAffine_Shear(void)
+{
+	cv::Mat img(300, 300, CV_8UC3, cv::Scalar(0, 0, 0));
+
+	// 定义三角形顶点
+	std::vector<cv::Point> trianglePoints;
+	trianglePoints.push_back(cv::Point(50, 50));
+	trianglePoints.push_back(cv::Point(200, 50));
+	trianglePoints.push_back(cv::Point(50, 200));
+
+	// 绘制填充三角形
+	cv::fillPoly(img, std::vector<std::vector<cv::Point>>{trianglePoints}, cv::Scalar(0, 255, 0));
+
+	// 定义变换点
+	cv::Point2f srcPoints[3] = { cv::Point2f(50, 50), cv::Point2f(200, 50), cv::Point2f(50, 200) };
+	cv::Point2f dstPoints[3] = { cv::Point2f(10, 100), cv::Point2f(200, 50), cv::Point2f(100, 250) };
+
+	// 计算仿射变换矩阵 需要三个点 来计算出变换矩阵
+	cv::Mat M = cv::getAffineTransform(srcPoints, dstPoints);
+
+	// 应用仿射变换
+	cv::Mat dst;
+	cv::warpAffine(img, dst, M, img.size());
+
+	// 显示结果
+	cv::imshow("Original", img);
+	cv::imshow("Transformed", dst);
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+}
+
+void geometric_transformations::demo04_rotation90(void)
+{
+	Mat img = imread("Resources/messi5.jpg", cv::IMREAD_COLOR);
+	if (img.empty())
+	{
+		cout << " load error";
+		return;
+	}
+	int windows_style = cv::WINDOW_AUTOSIZE | cv::WINDOW_KEEPRATIO;
+	//
+	string win_name = "img";
+	cv::namedWindow(win_name, windows_style);
+	imshow(win_name, img);
+	//
+	  // 顺时针旋转90度
+	cv::Mat rotated_img;
+	cv::rotate(img, rotated_img, cv::ROTATE_90_CLOCKWISE);
+
+	// 显示结果
+	win_name = "Rotated Image (90° Clockwise)";
+	cv::imshow("win_name", rotated_img);
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+	/*
+	 cv::Mat dst;
+    // 第一步：转置矩阵（行列互换）
+    cv::transpose(src, dst);
+    // 第二步：水平翻转（完成顺时针90度旋转）
+    cv::flip(dst, dst, 1);
+	*/
+}
