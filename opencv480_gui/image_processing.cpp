@@ -561,3 +561,58 @@ void morphological_transformation::demo01_erosion(void)
 {
 	
 }
+#include <fstream>
+
+void geometric_transformations::demo01_warpAffine(void)
+{
+	/*
+	https://docs.opencv.org/4.8.0/da/d6e/
+	tutorial_py_geometric_transformations.html
+	*/
+	Mat img = imread("Resources/messi5.jpg", cv::IMREAD_COLOR);
+	if (img.empty())
+	{
+		cout << " load error";
+		return;
+	}
+	int windows_style = cv::WINDOW_AUTOSIZE | cv::WINDOW_KEEPRATIO;
+	//
+	string win_name = "img";
+	cv::namedWindow(win_name, windows_style);
+	imshow(win_name, img);
+	//
+	Mat dst;
+	Size size=Size();
+	//我们只需要制定一个就行 size优先级大于缩放比例
+	//cv::INTER_CUBIC 用于放大图像
+	cv::resize(img,dst, size, 2.0, 2.0, cv::INTER_CUBIC);
+	win_name = "resize_img";
+	cv::namedWindow(win_name, windows_style);
+	imshow(win_name, dst);
+	//实现平移 平移可以参考线性代数的线性变换
+	//旋转矩阵必须是浮点数 可以是CV_32F（单精度浮点）或CV_64
+	//创建旋转矩阵
+	float tx = 100.0f;  // x方向平移：右移1像素
+	float ty = 50.0f;  // y方向平移：下移2像素
+	cv::Mat transform_matrix = (cv::Mat_<float>(2,3) << 
+		1, 0, tx,
+		0, 1, ty
+	);
+	cv::Mat translated_img;
+	cv::warpAffine(
+		img,                    // 输入图像
+		translated_img,          // 输出图像
+		transform_matrix,        // 变换矩阵
+		img.size(),              // 输出尺寸（与输入相同）
+		cv::INTER_LINEAR,        // 插值方法
+		cv::BORDER_CONSTANT,     // 边界处理方式 也是默认的处理方式
+		cv::Scalar(0, 0, 0)      // 边界填充颜色（黑色）
+	);
+	//旋转 当θ为正时​：表示逆时针旋转 
+	win_name = "trans_img";
+	cv::namedWindow(win_name, windows_style);
+	imshow(win_name, translated_img);
+	//
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+}

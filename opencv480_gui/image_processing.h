@@ -17,7 +17,8 @@ namespace changing_colorspaces
 }
 namespace geometric_transformations
 {
-
+	//图像的几何变化
+	void demo01_warpAffine(void);
 }
 namespace image_thresholding
 {
