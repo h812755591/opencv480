@@ -733,6 +733,9 @@ void geometric_transformations::demo04_rotation90(void)
 
 void geometric_transformations::demo05_Perspective(void)
 {
+	/*
+	透视变换主要用于凸多边形四边形的透视变换，如果多个就不太适用
+	*/
 	Mat img = imread("Resources/sudoku.png", cv::IMREAD_COLOR);
 	if (img.empty())
 	{
