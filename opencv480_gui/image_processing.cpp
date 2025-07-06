@@ -730,3 +730,62 @@ void geometric_transformations::demo04_rotation90(void)
     cv::flip(dst, dst, 1);
 	*/
 }
+
+void geometric_transformations::demo05_Perspective(void)
+{
+	Mat img = imread("Resources/sudoku.png", cv::IMREAD_COLOR);
+	if (img.empty())
+	{
+		cout << " load error";
+		return;
+	}
+	int windows_style = cv::WINDOW_AUTOSIZE | cv::WINDOW_KEEPRATIO;
+	//
+	string win_name = "img";
+	cv::namedWindow(win_name, windows_style);
+	imshow(win_name, img);
+	//源图像中的点（四边形四个角）
+	std::vector<cv::Point2f> sourcePoints = {
+		cv::Point2f(56, 65),    // 左上角
+		cv::Point2f(368, 52),   // 右上角
+		cv::Point2f(28, 387),   // 左下角
+		cv::Point2f(389, 390)   // 右下角
+	};
+
+	// 目标点集（标准矩形）
+	std::vector<cv::Point2f> targetPoints = {
+		cv::Point2f(0, 0),      // 左上角
+		cv::Point2f(300, 0),   // 右上角
+		cv::Point2f(0, 300),   // 左下角
+		cv::Point2f(300, 300)  // 右下角
+	};
+	// 计算透视变换矩阵
+	cv::Mat M = cv::getPerspectiveTransform(sourcePoints, targetPoints);
+	//
+	cv::Rect bbox = cv::boundingRect(targetPoints);
+	cv::Size outputSize(bbox.width, bbox.height);
+	/*
+	  /*
+    std::vector<cv::Point2f> srcCorners = {
+        cv::Point2f(0, 0),
+        cv::Point2f(img.cols, 0),
+        cv::Point2f(img.cols, img.rows),
+        cv::Point2f(0, img.rows)
+    };
+    std::vector<cv::Point2f> dstCorners;
+    cv::perspectiveTransform(srcCorners, dstCorners, M);
+    cv::Rect bbox = cv::boundingRect(dstCorners);
+    cv::Size outputSize(bbox.width, bbox.height);
+    */
+	
+	// 应用透视变换
+	cv::Mat dst;
+	cv::warpPerspective(img, dst, M, outputSize, cv::INTER_LINEAR, cv::BORDER_CONSTANT, cv::Scalar(0, 0, 0));
+	//
+	win_name = "Transformed Image";
+	cv::namedWindow(win_name, windows_style);
+	cv::imshow(win_name, dst);
+	//
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+}
