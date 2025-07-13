@@ -26,11 +26,15 @@ int main()
 	//geometric_transformations::demo01_warpAffine();
 	//geometric_transformations::demo02_warpAffine_rotation();
 	//geometric_transformations::demo04_rotation90();
-	geometric_transformations::demo05_Perspective();
+	//geometric_transformations::demo05_Perspective();
 	//geometric_transformations::demo03_warpAffine_Shear();
 	//image_thresholding::demo01_threshold();
 	//image_thresholding::demo02_adaptive_threshold();
 	//smoothing_images::demo01_filter2D();
 	//smoothing_images::demo01_blur();
+	//countours::demo01_find();
+	//countours::demo02_analize();
+	//countours::demo03_match();
+	countours::demo04_proxy();
 	return 1;
 }

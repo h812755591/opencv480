@@ -556,10 +556,24 @@ void smoothing_images::demo01_blur(void)
 
 	*/
 }
-
+/*
+有卷积核影响 比如矩形 线型  还有十字交叉 椭圆核（MORPH_ELLIPSE）
+其实计算核就是结构元素 cv::getStructuringElement 其实就是计算的核
+top_hat 原始图像 - 开运算结果
+黑帽（礼帽）​  闭运算结果 - 原始图像
+*/
 void morphological_transformation::demo01_erosion(void)
 {
 	
+}
+void morphological_transformation::demo02_dilation(void)
+{
+}
+void morphological_transformation::demo03_open(void)
+{
+}
+void morphological_transformation::demo04_closed(void)
+{
 }
 #include <fstream>
 
@@ -791,4 +805,240 @@ void geometric_transformations::demo05_Perspective(void)
 	//
 	cv::waitKey(0);
 	cv::destroyAllWindows();
+}
+
+void countours::demo01_find(void)
+{
+	Mat src = imread("Resources/rice.png");
+	if (src.empty()) {
+		printf("could not find image file");
+	}
+	int windows_style = cv::WINDOW_AUTOSIZE | cv::WINDOW_KEEPRATIO;
+	namedWindow("input", windows_style);
+	imshow("input", src);
+
+	// 二值化
+	GaussianBlur(src, src, Size(3, 3), 0);
+	Mat gray, binary;
+	cvtColor(src, gray, cv::COLOR_BGR2GRAY);
+	threshold(gray, binary, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
+
+	// 轮廓发现
+	imshow("binary", binary);
+	std::vector<std::vector<cv::Point>> contours;
+	std::vector<cv::Vec4i> hirearchy;
+	findContours(binary, contours, hirearchy, cv::RETR_TREE, 
+		cv::CHAIN_APPROX_SIMPLE, Point());
+	for (size_t t = 0; t < contours.size(); t++) {
+		cv::drawContours(src, contours, t, Scalar(0, 0, 255), 2, 8);
+	}
+	imshow("find contours demo", src);
+
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+	
+}
+
+void countours::demo02_analize(void)
+{
+	//计算面积 计算周长  过滤一些轮廓
+	Mat src = imread("Resources/zhifang_ball.png");
+	if (src.empty()) {
+		printf("could not find image file");
+	}
+	int windows_style = cv::WINDOW_AUTOSIZE | cv::WINDOW_KEEPRATIO;
+	namedWindow("input", windows_style);
+	imshow("input", src);
+	// 二值化
+	GaussianBlur(src, src, Size(3, 3), 0);
+	Mat gray, binary;
+	cvtColor(src, gray, cv::COLOR_BGR2GRAY);
+	threshold(gray, binary, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
+	// 轮廓发现
+	imshow("binary", binary);
+	std::vector<std::vector<Point>> contours;
+	std::vector<cv::Vec4i> hirearchy;
+	findContours(binary, contours, hirearchy,
+		cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE, Point());
+	for (size_t t = 0; t < contours.size(); t++) {
+		//计算面积和周长
+		double area = contourArea(contours[t]);
+		double len = arcLength(contours[t], true);
+		if (area < 100 || len < 10) continue;
+		// 获取外接矩形
+		cv::Rect box = cv::boundingRect(contours[t]);
+		// rectangle(src, box, Scalar(0, 0, 255), 2, 8, 0);
+		//获取最小外接矩形
+		cv::RotatedRect rrt = cv::minAreaRect(contours[t]);
+		// ellipse(src, rrt, Scalar(255, 0, 0), 2, 8);
+		cv::Point2f pts[4];
+		rrt.points(pts);
+		for (int i = 0; i < 4; i++) {
+			line(src, pts[i], pts[(i + 1) % 4], Scalar(0, 255, 0), 2, 8);
+		}
+		printf("area : %.2f, contour lenght : %.2f, angle:%.2f\n", area, len, rrt.angle);
+		//绘制所有的轮廓
+		//drawContours(result, contours, -1, Scalar(0, 255, 0), 2); // 绿色，线宽2
+
+		cv::drawContours(src, contours, t, Scalar(0, 0, 255), -1, 8);
+	}
+	imshow("find contours demo", src);
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+}
+namespace {
+	void contour_info(Mat &image, std::vector<std::vector<Point>> &contours) {
+		// 二值化
+		Mat dst;
+		GaussianBlur(image, dst, Size(3, 3), 0);
+		Mat gray, binary;
+		cvtColor(dst, gray, cv::COLOR_BGR2GRAY);
+		threshold(gray, binary, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
+
+		// 轮廓发现
+		std::vector<cv::Vec4i> hirearchy;
+		findContours(binary, contours, hirearchy, cv::RETR_EXTERNAL, 
+			cv::CHAIN_APPROX_SIMPLE, Point());
+	}
+
+
+}
+void countours::demo03_match(void)
+{
+	Mat src1 = imread("Resources/abc.png");
+	Mat src2 = imread("Resources/a.png");
+	if (src1.empty() || src2.empty()) {
+		printf("could not find image file");
+		return;
+	}
+	imshow("input1", src1);
+	imshow("input2", src2);
+	std::vector<std::vector<Point>> contours1;
+	std::vector<std::vector<cv::Point>> contours2;
+	contour_info(src1, contours1);
+	contour_info(src2, contours2);
+
+	cv::Moments mm2 = moments(contours2[0]);
+	Mat hu2;
+	HuMoments(mm2, hu2);
+
+	for (size_t t = 0; t < contours1.size(); t++) {
+		cv::Moments mm = moments(contours1[t]);
+		double cx = mm.m10 / mm.m00;
+		double cy = mm.m01 / mm.m00;
+		circle(src1, Point(cx, cy), 3, Scalar(255, 0, 0), 2, 8, 0);
+		Mat hu;
+		HuMoments(mm, hu);
+		double dist = matchShapes(hu, hu2, cv::CONTOURS_MATCH_I1, 0);
+		if (dist < 1.0) {
+			printf("matched distance value : %.2f\n", dist);
+			drawContours(src1, contours1, t, Scalar(0, 0, 255), 2, 8);
+		}
+	}
+	imshow("match contours demo", src1);
+
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+}
+namespace 
+{
+	void fit_circle_demo(Mat &image) {
+		// 二值化
+		Mat gray, binary;
+		cvtColor(image, gray, cv::COLOR_BGR2GRAY);
+		threshold(gray, binary, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
+
+		// 轮廓发现
+		imshow("binary", binary);
+		std::vector<std::vector<cv::Point>> contours;
+		std::vector<cv::Vec4i> hirearchy;
+		findContours(binary, contours, hirearchy, cv::RETR_EXTERNAL, 
+			cv::CHAIN_APPROX_SIMPLE, Point());
+
+		// 拟合圆或者椭圆
+		for (size_t t = 0; t < contours.size(); t++) {
+			// drawContours(image, contours, t, Scalar(0, 0, 255), 2, 8);
+			cv::RotatedRect rrt = cv::fitEllipse(contours[t]);
+			float w = rrt.size.width;
+			float h = rrt.size.height;
+			Point center = rrt.center;
+			circle(image, center, 3, Scalar(255, 0, 0), 2, 8, 0);
+			ellipse(image, rrt, Scalar(0, 255, 0), 2, 8);
+		}
+		imshow("fit result", image);
+	}
+	
+}
+
+void countours::demo04_proxy(void)
+{
+	
+	Mat src = imread("Resources/contours.png");
+	if (src.empty()) {
+		printf("could not find image file");
+		return;
+	}
+	fit_circle_demo(src);
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+	/*
+	
+	/*
+	
+	Mat src = imread("D:/images/stuff.png");
+	if (src.empty()) {
+		printf("could not find image file");
+		return -1;
+	}
+	fit_circle_demo(src);
+	/*
+	// 二值化
+	GaussianBlur(src, src, Size(3, 3), 0);
+	Mat gray, binary;
+	cvtColor(src, gray, COLOR_BGR2GRAY);
+	threshold(gray, binary, 0, 255, THRESH_BINARY | THRESH_OTSU);
+
+	// 轮廓发现
+	imshow("binary", binary);
+	vector<vector<Point>> contours;
+	vector<Vec4i> hirearchy;
+	findContours(binary, contours, hirearchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE, Point());
+
+	// 多边形逼近演示程序
+	for (size_t t = 0; t < contours.size(); t++) {
+		Moments mm = moments(contours[t]);
+		double cx = mm.m10 / mm.m00;
+		double cy = mm.m01 / mm.m00;
+		circle(src, Point(cx, cy), 3, Scalar(255, 0, 0), 2, 8, 0);
+
+		double area = contourArea(contours[t]);
+		double clen = arcLength(contours[t], true);
+
+		Mat result;
+		approxPolyDP(contours[t], result, 4, true);
+		printf("corners : %d , contour area : %.2f, contour length : %.2f \n", result.rows, area, clen);
+		if (result.rows == 6) {
+			putText(src, "poly", Point(cx, cy - 10), FONT_HERSHEY_PLAIN, 1.0, Scalar(0, 0, 255), 1, 8);
+		}
+		if (result.rows == 4) {
+			putText(src, "rectangle", Point(cx, cy - 10), FONT_HERSHEY_PLAIN, 1.0, Scalar(0, 255, 255), 1, 8);
+		}
+		if (result.rows == 3) {
+			putText(src, "triangle", Point(cx, cy - 10), FONT_HERSHEY_PLAIN, 1.0, Scalar(255, 0, 255), 1, 8);
+		}
+		if (result.rows  > 10) {
+			putText(src, "circle", Point(cx, cy - 10), FONT_HERSHEY_PLAIN, 1.0, Scalar(255, 255, 0), 1, 8);
+		}
+
+	}
+	imshow("find contours demo", src);
+	*/
+}
+
+void hough_trans::demo_line(void)
+{
+}
+
+void hough_trans::demo_circle(void)
+{
 }

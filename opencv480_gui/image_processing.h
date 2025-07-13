@@ -36,6 +36,25 @@ namespace smoothing_images
 }
 namespace morphological_transformation
 {
-	void demo01_erosion(void);
+	/*
+	腐蚀和膨胀不仅适用于二值图像，也适用于灰度图像
+	*/
+	void demo01_erosion(void);//
+	void demo02_dilation(void);//
+	void demo03_open(void);//腐蚀+膨胀
+	void demo04_closed(void);//膨胀+腐蚀
+}
+
+namespace countours
+{
+	void demo01_find(void);
+	void demo02_analize(void);
+	void demo03_match(void);//轮廓匹配
+	void demo04_proxy(void);//轮廓逼近
+}
+namespace hough_trans
+{
+	void demo_line(void);//霍夫直线检测
+	void demo_circle(void);//霍夫直线检测
 }
 #endif // !IMAGE_PROCESSING_H_
