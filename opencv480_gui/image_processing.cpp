@@ -1037,6 +1037,57 @@ void countours::demo04_proxy(void)
 
 void hough_trans::demo_line(void)
 {
+	Mat src = imread("Resources/ttline.png");
+	if (src.empty()) {
+		printf("could not find image file");
+		return;
+	}
+	imshow("input1", src);
+	//必须进行二值化
+	Mat binary,gray;
+	cv::cvtColor(src,gray,cv::COLOR_BGR2GRAY);
+	cv::threshold(gray,binary,0,255,cv::THRESH_BINARY|cv::THRESH_OTSU);
+	imshow("binary",binary);
+	//霍夫直线检测
+	//标准霍夫直线检测返回两个值 不返回投票数 。访问float votes= lines[i][2]
+	//会出现访问非法值的情况
+	//多尺度直线检测也就是 srn stn中只要有一个不为0 ，则返回三个值 cv::Vec3f
+	std::vector<cv::Vec2f> lines;
+	cv::HoughLines(binary, lines, 1, CV_PI / 180.0, 100, 0, 0);
+	Point pt1, pt2;
+	for (size_t i= 0; i < lines.size();i++) {
+		float rho = lines[i][0];//表示极坐标距离
+		float theta= lines[i][1];//角度
+		//float votes= lines[i][2];//投票数
+		//cout << "votes=" << votes << endl;
+		//绘制
+		double a = cos(theta);
+		double b = sin(theta);
+		double x0 = a * rho, y0 = b * rho;//这个实际上是垂直点
+		pt1.x = cvRound(x0 + 1000 * (-b));//线上距离1000的点
+		pt1.y = cvRound(y0 + 1000 * (a));
+		pt2.x = cvRound(x0 - 1000 * (-b));//反方向距离1000的点
+		pt2.y = cvRound(y0 - 1000 * (a));
+		int angle = round((theta / CV_PI) * 180);
+		printf("angle : %d \n", angle);
+		//
+		if (rho > 0) { // 右倾
+			line(src, pt1, pt2, Scalar(0, 0, 255), 1, 8, 0);
+			if (angle == 90) { // 水平线
+				line(src, pt1, pt2, Scalar(0, 255, 255), 2, 8, 0);
+			}
+			if (angle <= 1) {// 垂直线
+				line(src, pt1, pt2, Scalar(255, 255, 0), 4, 8, 0);
+			}
+		}
+		else { // 左倾
+			line(src, pt1, pt2, Scalar(255, 0, 0), 2, 8, 0);
+		}
+	}
+	imshow("hough line detection", src);
+	//
+	cv::waitKey(0);
+	cv::destroyAllWindows();
 }
 
 void hough_trans::demo_circle(void)

@@ -35,6 +35,7 @@ int main()
 	//countours::demo01_find();
 	//countours::demo02_analize();
 	//countours::demo03_match();
-	countours::demo04_proxy();
-	return 1;
+	//countours::demo04_proxy();
+	hough_trans::demo_line();
+	return 0;
 }

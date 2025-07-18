@@ -38,6 +38,9 @@ namespace morphological_transformation
 {
 	/*
 	腐蚀和膨胀不仅适用于二值图像，也适用于灰度图像
+	Morphological Gradient 还有梯度  这个是先膨胀 -后腐蚀
+	top hat 原图-open
+	black hat close -src
 	*/
 	void demo01_erosion(void);//
 	void demo02_dilation(void);//
