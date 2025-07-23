@@ -55,9 +55,14 @@ namespace countours
 	void demo03_match(void);//轮廓匹配
 	void demo04_proxy(void);//轮廓逼近
 }
+namespace histograms
+{
+	void demo01_cal(void);//灰度直方图 彩色直方图
+}
 namespace hough_trans
 {
 	void demo_line(void);//霍夫直线检测
+	void demo01_line(void);//霍夫直线检测
 	void demo_circle(void);//霍夫直线检测
 }
 #endif // !IMAGE_PROCESSING_H_

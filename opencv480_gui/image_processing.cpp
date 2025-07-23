@@ -1090,6 +1090,61 @@ void hough_trans::demo_line(void)
 	cv::destroyAllWindows();
 }
 
+void hough_trans::demo01_line(void)
+{
+	Mat src = imread("Resources/morph01.png");
+	if (src.empty()) {
+		printf("could not find image file");
+		return;
+	}
+	imshow("input1", src);
+	//必须进行二值化
+	Mat binary;
+	Canny(src, binary, 80, 160, 3, false);
+	imshow("binary", binary);
+
+	std::vector<cv::Vec4i> lines;
+	HoughLinesP(binary, lines, 1, CV_PI / 180, 80, 200, 10);
+	Mat result = Mat::zeros(src.size(), src.type());
+	for (int i = 0; i < lines.size(); i++) {
+		line(result, Point(lines[i][0], lines[i][1]), Point(lines[i][2], lines[i][3]), Scalar(0, 0, 255), 1, 8);
+	}
+	imshow("hough linesp demo", result);
+	//
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+}
+
 void hough_trans::demo_circle(void)
 {
+	Mat src = imread("Resources/morph01.png");
+	Mat gray;
+	cvtColor(src, gray, cv::COLOR_BGR2GRAY);
+	GaussianBlur(gray, gray, Size(9, 9), 2, 2);
+	imshow("gray", gray);
+	std::vector<cv::Vec3f> circles;
+	double minDist = 20;
+	double min_radius = 10;
+	double max_radius = 50;
+	HoughCircles(gray, circles, cv::HOUGH_GRADIENT, 3, minDist, 100, 100, min_radius, max_radius);
+	for (size_t t = 0; t < circles.size(); t++) {
+		Point center(circles[t][0], circles[t][1]);
+		int radius = round(circles[t][2]);
+		//
+		circle(src, center, radius, Scalar(0, 0, 255), 2, 8, 0);
+		circle(src, center, 3, Scalar(255, 0, 0), 2, 8, 0);
+	}
+	imshow("hough circle demo", src);
+
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+}
+
+void histograms::demo01_cal(void)
+{
+	Mat src = imread("Resources/flower.png");
+	if (src.empty()) {
+		printf("could not find image file");
+		return;
+	}
 }

@@ -36,6 +36,9 @@ int main()
 	//countours::demo02_analize();
 	//countours::demo03_match();
 	//countours::demo04_proxy();
-	hough_trans::demo_line();
+	//hough_trans::demo_line();
+	//hough_trans::demo01_line();
+	//hough_trans::demo_circle();
+	histograms::demo01_cal();
 	return 0;
 }
